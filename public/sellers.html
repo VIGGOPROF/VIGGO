@@ -21,15 +21,20 @@
 
         /* Dashboard */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .stat-label { font-size: 11px; color: var(--muted); font-weight: bold; text-transform: uppercase; }
-        .stat-value { font-size: 24px; font-weight: 900; margin-top: 5px; }
+        .stat-value { font-size: 28px; font-weight: 900; margin-top: 5px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
-        th { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+        th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+        th { color: var(--muted); font-size: 11px; text-transform: uppercase; background: #f9fafb; }
+        tr:hover { background: #f8fbff; }
         .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--brand); font-weight: bold; font-size: 14px; }
+        
+        .status-ok { color: #16a34a; font-weight: bold; }
+        .status-warn { color: #d97706; font-weight: bold; }
+        .status-alert { color: #dc2626; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -61,7 +66,7 @@
                 <h1 id="sellerTitle" style="margin:0">Cargando...</h1>
                 <span id="updateTime" style="color:var(--muted); font-size:12px;"></span>
             </div>
-            <button onclick="logout()" style="padding:8px 15px; border-radius:8px; border:1px solid #ddd; cursor:pointer;">Cerrar Sesión</button>
+            <button onclick="logout()" style="padding:8px 15px; border-radius:8px; border:1px solid #ddd; cursor:pointer; font-weight:bold;">Cerrar Sesión</button>
         </div>
 
         <div class="grid">
@@ -70,8 +75,8 @@
             <div class="card"><div class="stat-label">% de Cumplimiento</div><div class="stat-value" id="statPct">0%</div></div>
         </div>
 
-        <div class="card">
-            <h3>Detalle de Clientes</h3>
+        <div class="card" style="padding:0;">
+            <h3 style="padding: 25px 25px 0 25px; margin: 0;">Detalle de Clientes</h3>
             <div style="overflow-x:auto;">
                 <table id="clientsTable">
                     <thead>
@@ -83,7 +88,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td colspan="4">Cargando datos detallados...</td></tr>
+                        <tr><td colspan="4" style="text-align:center; padding:30px;">Cargando datos detallados...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -94,15 +99,17 @@
         const CONFIG = {
             salesUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
             sessionKey: "viggo_seller_logged_in",
-            hubKey: "viggo_hub_auth" // Esta es la llave que se crea en el index.html
+            hubKey: "viggo_hub_auth"
         };
 
-        // --- VERIFICACIÓN DE SESIÓN (AJUSTADA PARA GERENCIA) ---
+        // Extraer el nombre del vendedor de la URL (si viene del Hub)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSeller = urlParams.get('vendedor');
+
         function checkSession() {
             const isSeller = sessionStorage.getItem(CONFIG.sessionKey) === "true";
             const isManager = sessionStorage.getItem(CONFIG.hubKey) === "true";
 
-            // Si es Gerencia o es un Vendedor ya logueado, pasa directo
             if (isSeller || isManager) {
                 document.getElementById("loginScreen").classList.add("hidden");
                 document.getElementById("appWrapper").classList.remove("hidden");
@@ -110,7 +117,6 @@
             }
         }
 
-        // --- LOGIN PARA VENDEDORES DIRECTOS ---
         document.getElementById("loginForm").onsubmit = async (e) => {
             e.preventDefault();
             const username = document.getElementById("userInput").value.trim();
@@ -138,13 +144,18 @@
 
         function logout() {
             sessionStorage.removeItem(CONFIG.sessionKey);
-            sessionStorage.removeItem(CONFIG.hubKey);
-            location.reload();
+            // Si es gerente, lo mandamos al hub en lugar de desloguearlo del todo
+            if(sessionStorage.getItem(CONFIG.hubKey) === "true") {
+                window.location.href = "index.html";
+            } else {
+                location.reload();
+            }
         }
 
-        // --- CARGA DE DATOS ---
         async function loadDashboard() {
-            const sellerName = sessionStorage.getItem("viggo_seller_name") || "GERENCIA";
+            // LÓGICA CLAVE: Si hay nombre en URL usa ese, si no, usa el de la sesión.
+            const sellerName = urlSeller ? urlSeller.toUpperCase() : (sessionStorage.getItem("viggo_seller_name") || "GERENCIA");
+            
             document.getElementById("sellerTitle").textContent = "Panel: " + sellerName;
             document.getElementById("updateTime").textContent = "Actualizado: " + new Date().toLocaleTimeString();
 
@@ -178,8 +189,7 @@
         }
 
         function renderSellerStats(rows, targetName) {
-            // Si es Gerencia, mostramos datos globales o de prueba, 
-            // pero para los vendedores específicos filtramos su fila:
+            // Resumen General
             const summaryRow = rows.find(r => r[0] && r[0].toUpperCase() === targetName);
             
             if (summaryRow) {
@@ -192,27 +202,30 @@
                 document.getElementById("statPct").textContent = pct.toFixed(1) + "%";
             }
 
-            // Lógica para llenar la tabla de clientes (Filtrando por el nombre del vendedor)
+            // Tabla Detallada
             const tableBody = document.querySelector("#clientsTable tbody");
             tableBody.innerHTML = "";
             
-            // Buscamos las filas de clientes (usualmente a partir de la fila 30 en tu CSV)
             const clientRows = rows.filter(r => r[1] && r[1].toUpperCase() === targetName);
             
             if (clientRows.length === 0) {
-                tableBody.innerHTML = "<tr><td colspan='4'>No se encontraron clientes asignados.</td></tr>";
+                tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:30px;'>No se encontraron clientes asignados.</td></tr>";
             } else {
                 clientRows.forEach(r => {
                     const cActual = cleanNum(r[2]);
                     const cGoal = cleanNum(r[3]);
                     const cPct = cGoal > 0 ? (cActual/cGoal)*100 : 0;
 
+                    let statusClass = "status-alert";
+                    if(cPct >= 90) statusClass = "status-ok";
+                    else if(cPct >= 70) statusClass = "status-warn";
+
                     tableBody.innerHTML += `
                         <tr>
-                            <td>${r[0]}</td>
+                            <td><strong>${r[0]}</strong></td>
                             <td>${formatARS(cActual)}</td>
                             <td>${formatARS(cGoal)}</td>
-                            <td><strong>${cPct.toFixed(1)}%</strong></td>
+                            <td class="${statusClass}">${cPct.toFixed(1)}%</td>
                         </tr>
                     `;
                 });
