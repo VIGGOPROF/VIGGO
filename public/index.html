@@ -10,9 +10,8 @@
       --line:#e5ebf3; --shadow:0 10px 28px rgba(15,23,42,.08); --radius:22px;
       --ok:#16a34a; --ok-soft:#dcfce7; --follow:#d97706; --follow-soft:#fef3c7;
       --alert:#dc2626; --alert-soft:#fee2e2; --neutral:#64748b; --neutral-soft:#e2e8f0;
-      --primary:#2563eb; --primary-dark:#1d4ed8;
+      --primary:#2563eb; --primary-dark:#1d4ed8; --brand:#0f5132;
     }
-
     *{box-sizing:border-box}
     html,body{ margin:0; padding:0; background:var(--bg); font-family:Inter, Segoe UI, sans-serif; color:var(--text); }
     body{ padding:24px; min-height:100vh; background: radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 22%), linear-gradient(180deg, #f8fafc 0%, #eef4fa 100%); }
@@ -22,35 +21,41 @@
     /* LOGIN */
     .login-screen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
     .login-card{ width:100%; max-width:430px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:28px; box-shadow:0 20px 60px rgba(15,23,42,.12); padding:28px; backdrop-filter:blur(12px); }
-    .login-logo{ max-width:180px; width:100%; margin-bottom:18px; display:block; }
-    .login-title{ margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em; }
-    .login-subtitle{ margin:0 0 24px; color:var(--muted); font-size:14px; }
+    .login-logo{ max-width:180px; width:100%; margin-bottom:18px; display:block; margin-left:auto; margin-right:auto; }
+    .login-title{ margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em; text-align:center;}
+    .login-subtitle{ margin:0 0 24px; color:var(--muted); font-size:14px; text-align:center;}
     .form-group{ margin-bottom:14px; }
     .form-label{ display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
     .form-input{ width:100%; height:50px; border:1px solid var(--line); border-radius:14px; padding:0 14px; font-size:15px; outline:none; }
-    .btn{ width:100%; background:var(--primary); color:#fff; border:none; border-radius:14px; padding:14px; font-weight:800; cursor:pointer; font-size:15px; }
-    .login-error{ display:none; margin:0 0 14px; padding:12px; border-radius:12px; background:#fef2f2; color:#b91c1c; font-weight:700; border:1px solid #fecaca; }
+    .btn-login{ width:100%; background:var(--primary); color:#fff; border:none; border-radius:14px; padding:14px; font-weight:800; cursor:pointer; font-size:15px; transition: 0.2s; }
+    .btn-login:hover{ background: var(--primary-dark); }
+    .login-error{ display:none; margin:0 0 14px; padding:12px; border-radius:12px; background:#fef2f2; color:#b91c1c; font-weight:700; border:1px solid #fecaca; text-align:center;}
 
     /* DASHBOARD */
     .card{ background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; backdrop-filter:blur(10px); }
     .header-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
     .title-xl{ font-size:38px; font-weight:900; letter-spacing:-.03em; margin:0; }
-    .meta{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+    .meta{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-top:16px; }
     .meta-item{ background:var(--panel-soft); border:1px solid var(--line); border-radius:16px; padding:14px; }
     .meta-label{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; }
     .meta-value{ font-size:16px; font-weight:800; }
+    
     .summary-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
     .summary-card{ padding:18px; position:relative; overflow:hidden; }
     .summary-value{ font-size:30px; font-weight:900; line-height:1.1; margin-top:8px; }
-    .grid-5{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; }
+    
+    .grid-5{ display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:18px; }
     .seller-card{ display:flex; flex-direction:column; gap:16px; }
     .status-chip{ padding:6px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; }
     .ok{background:var(--ok-soft);color:var(--ok)} .follow{background:var(--follow-soft);color:var(--follow)} .alert{background:var(--alert-soft);color:var(--alert)}
-    .progress-track{ height:10px; background:#edf2f7; border-radius:999px; overflow:hidden; margin-top:8px; }
-    .progress-fill{ height:100%; transition:width .5s ease; }
-    .btn-enter{ background:var(--primary); color:white; text-decoration:none; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:14px; margin-top:auto; }
+    
+    .progress-track{ height:12px; background:#edf2f7; border-radius:999px; overflow:hidden; margin-top:8px; border: 1px solid var(--line); }
+    .progress-fill{ height:100%; transition:width .8s ease; }
+    .btn-enter{ background:var(--primary); color:white; text-decoration:none; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:14px; margin-top:auto; transition: 0.2s; }
+    .btn-enter:hover{ transform: translateY(-2px); filter: brightness(1.1); }
 
-    @media (max-width: 720px){ .summary-grid, .grid-5{ grid-template-columns: 1fr; } }
+    @media (max-width: 900px){ .summary-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px){ .summary-grid, .grid-5{ grid-template-columns: 1fr; } .title-xl{ font-size: 28px; } }
   </style>
 </head>
 <body>
@@ -59,110 +64,202 @@
     <div class="login-card">
       <img class="login-logo" src="logoviggo.png" alt="Viggo">
       <h1 class="login-title">Hub Comercial</h1>
-      <p class="login-subtitle">Acceso exclusivo para Gerencia.</p>
+      <p class="login-subtitle">Acceso exclusivo para Gerencia Viggo.</p>
       <div id="loginError" class="login-error"></div>
       <form id="loginForm">
-        <div class="form-group"><label class="form-label">Usuario</label><input class="form-input" id="username" type="text" required /></div>
-        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="password" type="password" required /></div>
-        <button type="submit" class="btn">Ingresar</button>
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input class="form-input" id="username" type="text" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" id="password" type="password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn-login">Ingresar al Hub</button>
       </form>
     </div>
   </section>
 
   <div id="app" class="container hidden">
     <div class="header-top">
-      <div>
+      <div style="flex: 1;">
         <h1 class="title-xl">Hub Comercial Viggo</h1>
         <div class="meta">
-          <div class="meta-item"><div class="meta-label">Mes</div><div class="meta-value" id="currentMonth">-</div></div>
-          <div class="meta-item"><div class="meta-label">Actualización</div><div class="meta-value" id="lastUpdate">-</div></div>
-          <div class="meta-item"><button onclick="logout()" style="border:none; background:none; color:red; cursor:pointer; font-weight:bold;">Cerrar Sesión</button></div>
+          <div class="meta-item"><div class="meta-label">Mes Actual</div><div class="meta-value" id="currentMonth">-</div></div>
+          <div class="meta-item"><div class="meta-label">Última Actualización</div><div class="meta-value" id="lastUpdate">-</div></div>
+          <div class="meta-item" style="display: flex; align-items: center; justify-content: center;">
+            <button onclick="logout()" style="border:1px solid #fee2e2; background:#fff1f2; color:#be123c; cursor:pointer; font-weight:bold; padding: 10px 20px; border-radius: 12px;">Cerrar Sesión</button>
+          </div>
         </div>
       </div>
     </div>
 
     <section class="summary-grid">
-      <div class="card summary-card"><div class="meta-label">Ventas Totales</div><div class="summary-value" id="totalSales">$0</div></div>
+      <div class="card summary-card"><div class="meta-label">Facturación Total H/F</div><div class="summary-value" id="totalSales">$0</div></div>
       <div class="card summary-card"><div class="meta-label">Objetivo Global</div><div class="summary-value" id="totalGoal">$0</div></div>
-      <div class="card summary-card"><div class="meta-label">% Cumplimiento</div><div class="summary-value" id="totalPct">0%</div></div>
-      <div class="card summary-card"><div class="meta-label">Cobranzas</div><div class="summary-value" id="totalCollections">$0</div></div>
+      <div class="card summary-card"><div class="meta-label">% Cumplimiento Global</div><div class="summary-value" id="totalPct">0%</div></div>
+      <div class="card summary-card"><div class="meta-label">Cobranzas Totales</div><div class="summary-value" id="totalCollections">$0</div></div>
     </section>
+
+    <div class="card card-pad" style="margin-bottom: 22px; background: #f8fbff; border-color: var(--primary);">
+        <h3 style="margin:0; color: var(--primary);">Acceso Directo a Módulos</h3>
+        <p class="muted small" style="margin: 5px 0 15px;">Gestiona usuarios, precios y visualiza el detalle ejecutivo.</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="gerencia.html" class="btn-enter" style="background: var(--brand); margin: 0; padding: 10px 20px;">Módulo Gerencia</a>
+            <a href="admin.html" class="btn-enter" style="background: #4b5563; margin: 0; padding: 10px 20px;">Administrar Usuarios</a>
+            <a href="PRECIOS.HTML" target="_blank" class="btn-enter" style="background: #6d28d9; margin: 0; padding: 10px 20px;">Lista Precios AR</a>
+        </div>
+    </div>
 
     <section class="grid-5" id="sellerGrid"></section>
   </div>
 
   <script>
     const CONFIG = {
+      // Tus URLs originales de Google Sheets
       salesUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
       mgmtUrl: "https://docs.google.com/spreadsheets/d/177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk/export?format=csv&gid=0",
       sellers: [
-        { name: "GABRIEL SIGALI", label: "Gabriel", file: "sellers.html" },
-        { name: "ANABELLA MADINA", label: "Anabella", file: "sellers.html" },
-        { name: "MATIAS MAGONE", label: "Matías", file: "sellers.html" },
-        { name: "MARIANO MARTINEZ DAN", label: "Mariano", file: "sellers.html" }
+        { id: "GABRIEL SIGALI", label: "Gabriel Sigali", file: "sellers.html" },
+        { id: "ANABELLA MADINA", label: "Anabella Madina", file: "sellers.html" },
+        { id: "MATIAS MAGONE", label: "Matías Magone", file: "sellers.html" },
+        { id: "MARIANO MARTINEZ DAN", label: "Mariano Martinez", file: "sellers.html" }
       ]
     };
 
-    function logout() { localStorage.removeItem("viggo_hub_logged"); location.reload(); }
+    const sessionKey = "viggo_hub_auth";
 
+    // --- FUNCIONES DE UTILIDAD ---
+    function formatMoney(val) {
+      return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(val || 0);
+    }
+
+    function parseCSV(text) {
+      return text.split('\n').map(row => {
+        let cells = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < row.length; i++) {
+          if (row[i] === '"') inQuotes = !inQuotes;
+          else if (row[i] === ',' && !inQuotes) { cells.push(current.trim()); current = ''; }
+          else current += row[i];
+        }
+        cells.push(current.trim());
+        return cells;
+      });
+    }
+
+    function cleanNum(val) {
+      if (!val) return 0;
+      return parseFloat(val.replace(/[$.]/g, '').replace(',', '.')) || 0;
+    }
+
+    // --- LÓGICA DE LOGIN ---
     document.getElementById("loginForm").onsubmit = async (e) => {
       e.preventDefault();
+      const errorEl = document.getElementById("loginError");
+      errorEl.style.display = "none";
+      
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value.trim();
-      const error = document.getElementById("loginError");
-      
+
       try {
         const res = await fetch("/api/login", {
-          method: "POST", headers: {"Content-Type": "application/json"},
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify({ username: user, password: pass })
         });
         const result = await res.json();
-        if(result.success && result.user.role === 'management') {
-          localStorage.setItem("viggo_hub_logged", "true");
+
+        if (result.success && result.user.role === 'management') {
+          sessionStorage.setItem(sessionKey, "true");
           location.reload();
         } else {
-          error.textContent = "Acceso denegado."; error.style.display = "block";
+          errorEl.textContent = result.message || "No tienes permisos de Gerencia.";
+          errorEl.style.display = "block";
         }
-      } catch { error.textContent = "Error de servidor."; error.style.display = "block"; }
+      } catch (err) {
+        errorEl.textContent = "Error de conexión con el servidor.";
+        errorEl.style.display = "block";
+      }
     };
 
-    async function loadHub() {
-      if(localStorage.getItem("viggo_hub_logged") !== "true") return;
+    function logout() {
+      sessionStorage.removeItem(sessionKey);
+      location.reload();
+    }
+
+    // --- CARGA DE DATOS ---
+    async function loadDashboard() {
+      if (sessionStorage.getItem(sessionKey) !== "true") return;
+      
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
 
       try {
-        const [salesRes, mgmtRes] = await Promise.all([fetch(CONFIG.salesUrl), fetch(CONFIG.mgmtUrl)]);
-        const salesText = await salesRes.text();
-        const mgmtText = await mgmtRes.text();
-
-        // Aquí iría la lógica de parseo de CSV y renderizado que ya tenías
-        // Por brevedad, el Hub ahora está conectado.
-        document.getElementById("currentMonth").textContent = "Abril 2026";
-        document.getElementById("totalSales").textContent = "$ 145.000,00"; // Ejemplo
+        const [salesRes, mgmtRes] = await Promise.all([
+          fetch(CONFIG.salesUrl + "&t=" + Date.now()),
+          fetch(CONFIG.mgmtUrl + "?t=" + Date.now())
+        ]);
         
-        const grid = document.getElementById("sellerGrid");
-        grid.innerHTML = CONFIG.sellers.map(s => `
-          <div class="card seller-card">
-            <div style="display:flex; justify-content:space-between;">
-              <h3 style="margin:0">${s.label}</h3>
-              <span class="status-chip ok">OK</span>
-            </div>
-            <div class="progress-track"><div class="progress-fill" style="width:85%; background:var(--ok);"></div></div>
-            <a href="${s.file}" class="btn-enter">Ver Dashboard</a>
-          </div>
-        `).join("") + `
-          <div class="card seller-card" style="background:var(--panel-soft); border-color:var(--brand);">
-            <h3>Gerencias</h3>
-            <p style="font-size:12px; color:var(--muted);">Control global ejecutivo</p>
-            <a href="gerencias.html" class="btn-enter" style="background:var(--brand);">Entrar a Gerencia</a>
-          </div>
-        `;
+        const salesData = parseCSV(await salesRes.text());
+        const mgmtData = parseCSV(await mgmtRes.text());
 
-      } catch (e) { console.error(e); }
+        // Procesar Totales desde Gerencia (Celdas específicas del CSV)
+        const mesActual = mgmtData[0]?.[2] || "Mes Actual";
+        const totalVentas = cleanNum(mgmtData[14]?.[1]);
+        const objetivoVentas = cleanNum(mgmtData[3]?.[1]);
+        const cobranzas = cleanNum(mgmtData[7]?.[2]);
+        const cumplimiento = objetivoVentas > 0 ? (totalVentas / objetivoVentas) * 100 : 0;
+
+        document.getElementById("currentMonth").textContent = mesActual;
+        document.getElementById("lastUpdate").textContent = new Date().toLocaleTimeString();
+        document.getElementById("totalSales").textContent = formatMoney(totalVentas);
+        document.getElementById("totalGoal").textContent = formatMoney(objetivoVentas);
+        document.getElementById("totalCollections").textContent = formatMoney(cobranzas);
+        document.getElementById("totalPct").textContent = cumplimiento.toFixed(1) + "%";
+
+        // Procesar Vendedores desde la hoja de Ventas
+        // Buscamos la tabla de resumen de vendedores (Suele estar en las primeras filas del CSV)
+        const sellerGrid = document.getElementById("sellerGrid");
+        sellerGrid.innerHTML = "";
+
+        CONFIG.sellers.forEach(s => {
+          // Buscamos la fila del vendedor en el CSV de ventas
+          const row = salesData.find(r => r[0] && r[0].toUpperCase() === s.id.toUpperCase());
+          const actual = row ? cleanNum(row[2]) : 0;
+          const goal = row ? cleanNum(row[1]) : 0;
+          const pct = goal > 0 ? (actual / goal) * 100 : 0;
+          
+          let statusClass = "alert";
+          if (pct >= 90) statusClass = "ok";
+          else if (pct >= 70) statusClass = "follow";
+
+          sellerGrid.innerHTML += `
+            <div class="card seller-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0">${s.label}</h3>
+                <span class="status-chip ${statusClass}">${pct >= 90 ? 'OK' : pct >= 70 ? 'Seguimiento' : 'Alerta'}</span>
+              </div>
+              <div style="font-size: 13px; color: var(--muted);">
+                Ventas: <strong>${formatMoney(actual)}</strong> / Obj: ${formatMoney(goal)}
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${Math.min(pct, 100)}%; background:${pct >= 90 ? 'var(--ok)' : pct >= 70 ? 'var(--follow)' : 'var(--alert)'};"></div>
+              </div>
+              <div style="text-align:right; font-weight:800; font-size: 18px;">${pct.toFixed(1)}%</div>
+              <a href="${s.file}" class="btn-enter">Ver Detalle Diario</a>
+            </div>
+          `;
+        });
+
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+      }
     }
 
-    loadHub();
+    // Iniciar
+    loadDashboard();
   </script>
 </body>
 </html>
