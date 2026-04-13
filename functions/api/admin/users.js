@@ -21,19 +21,37 @@ export async function onRequest(context) {
       const body = await request.json();
       const { username, password, role, name, first_name } = body;
 
-      // Insertamos en la DB (guardamos el usuario en minúsculas para evitar errores)
       await env.DB.prepare(
         "INSERT INTO users (username, password, role, name, first_name) VALUES (?, ?, ?, ?, ?)"
       ).bind(username.toLowerCase(), password, role, name, first_name).run();
 
       return new Response(JSON.stringify({ success: true }), { status: 201 });
     } catch (err) {
-      // El error más común acá es que el 'username' ya exista
       return new Response(JSON.stringify({ success: false, message: "El usuario ya existe o hay un error en los datos." }), { status: 400 });
     }
   }
 
-  // 3. BORRAR UN USUARIO (DELETE)
+  // 3. ACTUALIZAR UN USUARIO (PUT)
+  if (request.method === "PUT") {
+    try {
+      const body = await request.json();
+      const { id, username, password } = body;
+
+      if (!id || !username || !password) {
+        return new Response(JSON.stringify({ success: false, message: "Faltan datos para actualizar." }), { status: 400 });
+      }
+
+      await env.DB.prepare(
+        "UPDATE users SET username = ?, password = ? WHERE id = ?"
+      ).bind(username.toLowerCase(), password, id).run();
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    } catch (error) {
+      return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
+    }
+  }
+
+  // 4. BORRAR UN USUARIO (DELETE)
   if (request.method === "DELETE") {
     try {
       const id = url.searchParams.get("id");
