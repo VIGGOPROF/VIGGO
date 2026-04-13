@@ -843,7 +843,7 @@
         <div class="card kpi-card">
           <div class="kpi-label">Pagos últimos 30 días</div>
           <div class="kpi-value" id="kpiCollectionsGoal">$0</div>
-          <div class="kpi-sub">Pagos realizados recientemente por los clientes.</div>
+          <div class="kpi-sub">Pagos realizados recentemente por los clientes.</div>
         </div>
         <div class="card kpi-card">
           <div class="kpi-label">Clientes activos con compra</div>
@@ -918,36 +918,7 @@
   </div>
 
   <script>
-    // --- LÓGICA DE AUTENTICACIÓN Y DIRECTORIO ---
-    
-    // Directorio de vendedores (Usuario en minúscula)
-    const SELLERS_DIRECTORY = {
-      "ana": { 
-        pass: "ventas2026", 
-        name: "Anabella Madina", 
-        firstName: "Anabella",
-        aliases: ["Anabella Madina"] 
-      },
-      "mariano": { 
-        pass: "ventas2026", 
-        name: "Mariano Martinez Dan", 
-        firstName: "Mariano",
-        aliases: ["Mariano Martinez Dan", "Mariano Martinez"] 
-      },
-      "matias": { 
-        pass: "ventas2026", 
-        name: "Matias Magone", 
-        firstName: "Matias",
-        aliases: ["Matias Magone", "MATIAS MAGONE"] 
-      },
-      "gabriel": { 
-        pass: "ventas2026", 
-        name: "GABRIEL SIGALI", 
-        firstName: "Gabriel",
-        aliases: ["GABRIEL SIGALI", "Gabriel Sigali"] 
-      }
-    };
-
+    // --- LÓGICA DE AUTENTICACIÓN DB ---
     const sessionKey = "viggo_unified_seller_auth";
     let activeSeller = null;
 
@@ -979,20 +950,45 @@
       location.reload();
     }
 
-    loginForm.addEventListener("submit", function(e) {
+    loginForm.addEventListener("submit", async function(e) {
       e.preventDefault();
-      const user = document.getElementById("authUsername").value.trim().toLowerCase();
-      const pass = document.getElementById("authPassword").value.trim();
+      loginError.style.display = "none";
+      const username = document.getElementById("authUsername").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
 
-      if (SELLERS_DIRECTORY[user] && SELLERS_DIRECTORY[user].pass === pass) {
-        loginError.style.display = "none";
-        activeSeller = SELLERS_DIRECTORY[user];
-        sessionStorage.setItem(sessionKey, JSON.stringify(activeSeller));
-        
-        loginScreen.classList.add("hidden");
-        appWrapper.classList.remove("hidden");
-        initApp();
-      } else {
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.user.role === 'seller') {
+          // Guardamos los datos que vienen de la DB
+          activeSeller = {
+            name: result.user.name,
+            firstName: result.user.firstName,
+            // Agregamos variantes para asegurar el match con el Google Sheet
+            aliases: [
+              result.user.name, 
+              result.user.name.toUpperCase(), 
+              result.user.firstName,
+              result.user.firstName.toUpperCase()
+            ] 
+          };
+          sessionStorage.setItem(sessionKey, JSON.stringify(activeSeller));
+          
+          loginScreen.classList.add("hidden");
+          appWrapper.classList.remove("hidden");
+          initApp();
+        } else {
+          loginError.textContent = result.message || "No tenés permiso de vendedor";
+          loginError.style.display = "block";
+        }
+      } catch (error) {
+        loginError.textContent = "Error de conexión con el servidor";
         loginError.style.display = "block";
       }
     });
