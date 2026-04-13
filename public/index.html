@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub Comercial - Viggo Professional</title>
+  <style>
+    :root {
+      --brand: #0f5132; --brand-2: #13653f; --bg: #f4f7fb; --panel: #ffffff;
+      --text: #16202c; --muted: #6b7787; --line: #e5ebf3; --primary: #2563eb;
+      --ok: #16a34a; --warn: #d97706; --error: #dc2626; --shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    .hidden { display: none !important; }
+
+    /* Login Styles */
+    .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center; }
+    .login-card img { max-width: 180px; margin-bottom: 20px; }
+    .login-card h1 { font-size: 24px; margin-bottom: 10px; }
+    .login-card p { color: var(--muted); margin-bottom: 25px; font-size: 14px; }
+    .form-group { text-align: left; margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: var(--muted); text-transform: uppercase; }
+    .form-group input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; }
+    .btn-login { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+    /* Hub Styles */
+    .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--primary); }
+    .stat-label { font-size: 12px; color: var(--muted); font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+    .stat-value { font-size: 28px; font-weight: 900; }
+
+    .module-links { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+    .btn-mod { padding: 12px 20px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; font-size: 14px; }
+
+    .sellers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .seller-card { background: white; padding: 25px; border-radius: 22px; box-shadow: var(--shadow); }
+    .seller-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .seller-name { font-size: 20px; font-weight: 800; margin: 0; }
+    .progress-bar { height: 12px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+    .progress-fill { height: 100%; transition: width 0.5s; }
+    .btn-view { display: block; text-align: center; padding: 12px; background: #f1f5f9; color: var(--text); border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen" class="login-container">
+    <div class="login-card">
+      <img src="logoviggo.png" alt="Viggo">
+      <h1>Hub Comercial</h1>
+      <p>Ingresá tus credenciales de Gerencia</p>
+      <div id="loginError" style="color:red; font-weight:bold; margin-bottom:15px; display:none;"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Usuario</label>
+          <input type="text" id="userInput" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="passInput" required>
+        </div>
+        <button type="submit" class="btn-login">Ingresar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="mainApp" class="container hidden">
+    <div class="header">
+      <div>
+        <h2 style="margin:0">Viggo Professional</h2>
+        <span id="updateLabel" style="color:var(--muted); font-size:13px;">Actualizando datos...</span>
+      </div>
+      <button onclick="logout()" style="padding:10px; border-radius:8px; border:1px solid #ddd; cursor:pointer;">Cerrar Sesión</button>
+    </div>
+
+    <div class="module-links">
+      <a href="gerencia.html" class="btn-mod" style="background:var(--brand)">Módulo Gerencia</a>
+      <a href="admin.html" class="btn-mod" style="background:#4b5563">Administrar Usuarios</a>
+      <a href="PRECIOS.HTML" class="btn-mod" style="background:#6d28d9">Precios AR</a>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Facturación H/F</div><div class="stat-value" id="totalSales">$0</div></div>
+      <div class="stat-card"><div class="stat-label">Objetivo Global</div><div class="stat-value" id="totalGoal">$0</div></div>
+      <div class="stat-card"><div class="stat-label">% Cumplimiento</div><div class="stat-value" id="totalPct">0%</div></div>
+      <div class="stat-card"><div class="stat-label">Cobranzas</div><div class="stat-value" id="totalCollections">$0</div></div>
+    </div>
+
+    <h3 style="margin-bottom:20px">Seguimiento por Vendedor</h3>
+    <div class="sellers-grid" id="sellersGrid"></div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      salesUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
+      mgmtUrl: "https://docs.google.com/spreadsheets/d/177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk/export?format=csv&gid=0",
+      sellers: [
+        { id: "GABRIEL SIGALI", label: "Gabriel Sigali" },
+        { id: "ANABELLA MADINA", label: "Anabella Madina" },
+        { id: "MATIAS MAGONE", label: "Matías Magone" },
+        { id: "MARIANO MARTINEZ DAN", label: "Mariano Martinez" }
+      ]
+    };
+
+    // --- SEGURIDAD ---
+    const loginForm = document.getElementById('loginForm');
+    loginForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('userInput').value.trim();
+      const password = document.getElementById('passInput').value.trim();
+      const errorDiv = document.getElementById('loginError');
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
+        if (result.success && result.user.role === 'management') {
+          sessionStorage.setItem('viggo_auth', 'true');
+          initDashboard();
+        } else {
+          errorDiv.textContent = "Acceso denegado o rol insuficiente.";
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) { alert("Error de conexión al servidor."); }
+    };
+
+    function logout() { sessionStorage.removeItem('viggo_auth'); location.reload(); }
+
+    // --- CARGA DE DATOS ---
+    async function initDashboard() {
+      if (sessionStorage.getItem('viggo_auth') !== 'true') return;
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+
+      try {
+        const [salesRes, mgmtRes] = await Promise.all([ fetch(CONFIG.salesUrl), fetch(CONFIG.mgmtUrl) ]);
+        const salesText = await salesRes.text();
+        const mgmtText = await mgmtRes.text();
+
+        const salesData = parseCSV(salesText);
+        const mgmtData = parseCSV(mgmtText);
+
+        renderStats(salesData, mgmtData);
+      } catch (err) { console.error("Error cargando Sheets", err); }
+    }
+
+    function parseCSV(text) {
+      return text.split('\n').map(row => {
+        let cells = []; let cur = ''; let inQ = false;
+        for (let i=0; i<row.length; i++) {
+          if (row[i]==='"') inQ = !inQ;
+          else if (row[i]===',' && !inQ) { cells.push(cur.trim()); cur=''; }
+          else cur += row[i];
+        }
+        cells.push(cur.trim()); return cells;
+      });
+    }
+
+    function cleanNum(val) {
+      if (!val) return 0;
+      return parseFloat(val.replace(/[$.]/g, '').replace(',', '.')) || 0;
+    }
+
+    function formatARS(val) {
+      return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(val);
+    }
+
+    function renderStats(sales, mgmt) {
+      // Totales desde Gerencia (Fila 15 columna B del CSV aprox)
+      const totalV = cleanNum(mgmt[14]?.[1]);
+      const objV = cleanNum(mgmt[3]?.[1]);
+      const cob = cleanNum(mgmt[7]?.[2]);
+
+      document.getElementById('totalSales').textContent = formatARS(totalV);
+      document.getElementById('totalGoal').textContent = formatARS(objV);
+      document.getElementById('totalCollections').textContent = formatARS(cob);
+      document.getElementById('totalPct').textContent = objV > 0 ? ((totalV/objV)*100).toFixed(1) + "%" : "0%";
+      document.getElementById('updateLabel').textContent = "Mes: " + mgmt[0]?.[2] + " | Actualizado: " + new Date().toLocaleTimeString();
+
+      // Vendedores
+      const grid = document.getElementById('sellersGrid');
+      grid.innerHTML = "";
+      CONFIG.sellers.forEach(s => {
+        const row = sales.find(r => r[0] && r[0].toUpperCase() === s.id);
+        const actual = row ? cleanNum(row[2]) : 0;
+        const goal = row ? cleanNum(row[1]) : 0;
+        const pct = goal > 0 ? (actual/goal)*100 : 0;
+
+        grid.innerHTML += `
+          <div class="seller-card">
+            <div class="seller-head">
+              <h3 class="seller-name">${s.label}</h3>
+              <span style="font-weight:900; color:${pct >= 90 ? 'var(--ok)' : 'var(--error)'}">${pct.toFixed(1)}%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%; background:${pct>=90?'var(--ok)':pct>=75?'var(--warn)':'var(--error)'}"></div></div>
+            <div style="font-size:13px; color:var(--muted)">Ventas: <strong>${formatARS(actual)}</strong> / Obj: ${formatARS(goal)}</div>
+            <a href="sellers.html" class="btn-view">Ver Detalles</a>
+          </div>
+        `;
+      });
+    }
+
+    if (sessionStorage.getItem('viggo_auth') === 'true') initDashboard();
+  </script>
+</body>
+</html>
