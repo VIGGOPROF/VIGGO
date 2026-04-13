@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Gerencias</title>
+  <title>Dashboard Gerencias - Viggo Professional</title>
   <style>
     :root {
       --bg: #f4f7fb;
@@ -12,6 +12,8 @@
       --line: #d7e0ea;
       --text: #16202b;
       --muted: #5f6b7a;
+      --brand: #0f5132;
+      --brand-2: #13653f;
       --accent: #d4a017;
       --accent-soft: rgba(212, 160, 23, 0.14);
       --green: #16a34a;
@@ -33,6 +35,105 @@
         linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
     }
 
+    .hidden { display: none !important; }
+
+    /* --- ESTILOS DEL LOGIN --- */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(15,23,42,.12);
+      padding: 34px 28px;
+    }
+
+    .login-logo {
+      max-width: 180px;
+      margin: 0 auto 20px auto;
+      display: block;
+    }
+
+    .login-title {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .login-subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.12);
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 14px;
+      background: var(--brand);
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: .2s ease;
+    }
+    
+    .login-btn:hover { background: var(--brand-2); }
+
+    .login-error {
+      display: none;
+      margin: 0 0 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* --- ESTILOS DEL DASHBOARD --- */
     .container {
       width: min(1380px, calc(100% - 36px));
       margin: 26px auto 40px;
@@ -184,7 +285,7 @@
     .fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #edd07a);
+      background: linear-gradient(90deg, var(--brand), #edd07a);
     }
 
     .grid-kpis {
@@ -197,14 +298,6 @@
     .kpi {
       padding: 20px;
       position: relative;
-    }
-
-    .kpi::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.28), transparent);
-      pointer-events: none;
     }
 
     .kpi-head {
@@ -247,42 +340,6 @@
       margin-bottom: 12px;
     }
 
-    .sparkline {
-      height: 54px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(22,32,43,0.02), rgba(22,32,43,0.01));
-      border: 1px solid rgba(22,32,43,0.06);
-      display: flex;
-      align-items: end;
-      gap: 5px;
-      padding: 8px;
-    }
-
-    .sparkline span {
-      flex: 1;
-      border-radius: 6px 6px 2px 2px;
-      background: linear-gradient(180deg, rgba(212,160,23,0.95), rgba(212,160,23,0.42));
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1.35fr .95fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .panel-title {
-      font-size: 18px;
-      margin: 0 0 16px;
-    }
-
-    .panel-sub {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: -8px;
-      margin-bottom: 14px;
-    }
-
     .chart {
       height: 340px;
       padding: 12px 8px 10px;
@@ -312,18 +369,6 @@
       position: relative;
     }
 
-    .chart-bars::before,
-    .chart-bars::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      border-top: 1px dashed rgba(22,32,43,0.12);
-    }
-
-    .chart-bars::before { bottom: 33%; }
-    .chart-bars::after { bottom: 66%; }
-
     .bar {
       width: 46px;
       border-radius: 14px 14px 4px 4px;
@@ -332,31 +377,8 @@
     }
 
     .bar.obj { background: linear-gradient(180deg, rgba(59,130,246,0.95), rgba(59,130,246,0.42)); }
-    .bar.real { background: linear-gradient(180deg, rgba(212,160,23,0.95), rgba(212,160,23,0.42)); }
+    .bar.real { background: linear-gradient(180deg, rgba(15, 81, 50, 0.95), rgba(15, 81, 50, 0.42)); }
     .bar.gasto { background: linear-gradient(180deg, rgba(220,38,38,0.9), rgba(220,38,38,0.42)); }
-
-    .legend {
-      display: flex;
-      gap: 14px;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      flex-wrap: wrap;
-    }
-
-    .legend i {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
-
-    .side-stack {
-      display: grid;
-      gap: 18px;
-    }
 
     .progress-list {
       display: grid;
@@ -383,13 +405,7 @@
     .progress-fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #f0d78b);
-    }
-
-    .notes {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
+      background: linear-gradient(90deg, var(--brand), #f0d78b);
     }
 
     table {
@@ -424,535 +440,328 @@
       .title-wrap h1 { font-size: 34px; }
       .hero-value { font-size: 42px; }
       .grid-kpis { grid-template-columns: 1fr; }
-      .chart { overflow-x: auto; }
-      .chart-group { min-width: 120px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <div class="title-wrap">
-        <h1>Dashboard Gerencias</h1>
-        <p>Control ejecutivo de objetivo mensual, datos H/F y cumplimiento.</p>
-      </div>
-      <div class="meta">
-        <div class="meta-card">
-          <span>Mes</span>
-          <strong id="mes">-</strong>
-        </div>
-        <div class="meta-card">
-          <span>Fuente</span>
-          <strong>Google Sheet</strong>
-        </div>
-      </div>
-    </header>
 
-    <section class="hero">
-      <article class="panel hero-main">
-        <div class="panel-inner">
-          <div class="hero-kicker">% alcanzado global</div>
-          <div class="hero-value" id="objetivoTotal">0%</div>
-          <div class="hero-sub">
-            <span class="pill" id="cumplimientoGlobal">Cumplimiento global: 0%</span>
-            <span id="resumenHero">Promedio de alcance de ventas, cobranzas, gastos y margen.</span>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img class="login-logo" src="logoviggo.png" alt="Viggo">
+      <h1 class="login-title">Dashboard Gerencia</h1>
+      <p class="login-subtitle">Ingresa tus credenciales para acceder al panel ejecutivo.</p>
+
+      <div id="loginError" class="login-error">Usuario o contraseña incorrectos.</div>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="authUsername">Usuario</label>
+          <input class="form-input" id="authUsername" type="text" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Contraseña</label>
+          <input class="form-input" id="authPassword" type="password" required />
+        </div>
+        <button type="submit" class="login-btn">Ingresar</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="appWrapper" class="hidden">
+    <div class="container">
+      <header class="header">
+        <div class="title-wrap">
+          <h1>Dashboard Gerencias</h1>
+          <p>Control ejecutivo de objetivo mensual, datos H/F y cumplimiento.</p>
+        </div>
+        <div class="meta">
+          <div class="meta-card">
+            <span>Mes</span>
+            <strong id="mes">-</strong>
           </div>
-        </div>
-      </article>
-
-      <article class="panel">
-        <div class="panel-inner">
-          <h3 class="panel-title">Vista rápida</h3>
-          <div class="mini-bars">
-            <div class="mini-row">
-              <div class="name">Ventas</div>
-              <div class="track"><div class="fill" id="miniVentas" style="width:0%"></div></div>
-              <div id="miniVentasTxt">0%</div>
-            </div>
-            <div class="mini-row">
-              <div class="name">Cobranzas</div>
-              <div class="track"><div class="fill" id="miniCobranzas" style="width:0%"></div></div>
-              <div id="miniCobranzasTxt">0%</div>
-            </div>
-            <div class="mini-row">
-              <div class="name">Gastos</div>
-              <div class="track"><div class="fill" id="miniGastos" style="width:0%"></div></div>
-              <div id="miniGastosTxt">0%</div>
-            </div>
-            <div class="mini-row">
-              <div class="name">Margen</div>
-              <div class="track"><div class="fill" id="miniMargen" style="width:0%"></div></div>
-              <div id="miniMargenTxt">0%</div>
-            </div>
+          <div class="meta-card">
+            <span>Fuente</span>
+            <strong>Google Sheet</strong>
           </div>
+          <button onclick="logout()" style="padding:10px 20px; background:#fff; border:1px solid var(--line); border-radius:10px; cursor:pointer; font-weight:bold; margin-top:5px;">Cerrar Sesión</button>
         </div>
-      </article>
-    </section>
+      </header>
 
-    <section class="grid-kpis">
-      <article class="panel kpi">
-        <div class="kpi-head">
-          <div class="kpi-label">Ventas</div>
-          <div class="status warn" id="ventasStatus">Seguimiento</div>
-        </div>
-        <div class="kpi-value" id="ventas">$ 0</div>
-        <div class="kpi-meta">
-          <span>Objetivo: <strong id="ventasObj">$ 0</strong></span>
-          <span id="ventasPct">0%</span>
-        </div>
-        <div class="sparkline"><span style="height:40%"></span><span style="height:64%"></span><span style="height:56%"></span><span style="height:78%"></span><span style="height:72%"></span><span style="height:88%"></span></div>
-      </article>
-
-      <article class="panel kpi">
-        <div class="kpi-head">
-          <div class="kpi-label">Cobranzas</div>
-          <div class="status warn" id="cobranzasStatus">Seguimiento</div>
-        </div>
-        <div class="kpi-value" id="cobranzas">$ 0</div>
-        <div class="kpi-meta">
-          <span>Objetivo: <strong id="cobranzasObj">$ 0</strong></span>
-          <span id="cobranzasPct">0%</span>
-        </div>
-        <div class="sparkline"><span style="height:34%"></span><span style="height:48%"></span><span style="height:58%"></span><span style="height:62%"></span><span style="height:76%"></span><span style="height:84%"></span></div>
-      </article>
-
-      <article class="panel kpi">
-        <div class="kpi-head">
-          <div class="kpi-label">Gastos</div>
-          <div class="status alert" id="gastosStatus">Control</div>
-        </div>
-        <div class="kpi-value" id="gastos">$ 0</div>
-        <div class="kpi-meta">
-          <span>Objetivo: <strong id="gastosObj">$ 0</strong></span>
-          <span id="gastosPct">0%</span>
-        </div>
-        <div class="sparkline"><span style="height:22%"></span><span style="height:42%"></span><span style="height:38%"></span><span style="height:60%"></span><span style="height:74%"></span><span style="height:90%"></span></div>
-      </article>
-
-      <article class="panel kpi">
-        <div class="kpi-head">
-          <div class="kpi-label">Margen</div>
-          <div class="status ok" id="margenStatus">Controlado</div>
-        </div>
-        <div class="kpi-value" id="margen">0%</div>
-        <div class="kpi-meta">
-          <span>Objetivo: <strong id="margenObj">0%</strong></span>
-          <span id="margenPct">0%</span>
-        </div>
-        <div class="sparkline"><span style="height:55%"></span><span style="height:58%"></span><span style="height:64%"></span><span style="height:72%"></span><span style="height:68%"></span><span style="height:80%"></span></div>
-      </article>
-    </section>
-
-    <section class="main-grid">
-      <article class="panel">
-        <div class="panel-inner">
-          <h3 class="panel-title">Comparativo Objetivo vs H/F</h3>
-          <div class="panel-sub">Gráfico estático alimentado por los valores actuales de la hoja.</div>
-          <div class="chart">
-            <div class="chart-group">
-              <div class="chart-bars">
-                <div class="bar obj" id="barObjVentas" style="height:20px"></div>
-                <div class="bar real" id="barRealVentas" style="height:20px"></div>
-              </div>
-              <div>Ventas</div>
-            </div>
-            <div class="chart-group">
-              <div class="chart-bars">
-                <div class="bar obj" id="barObjCobranzas" style="height:20px"></div>
-                <div class="bar real" id="barRealCobranzas" style="height:20px"></div>
-              </div>
-              <div>Cobranzas</div>
-            </div>
-            <div class="chart-group">
-              <div class="chart-bars">
-                <div class="bar obj" id="barObjGastos" style="height:20px"></div>
-                <div class="bar gasto" id="barRealGastos" style="height:20px"></div>
-              </div>
-              <div>Gastos</div>
-            </div>
-            <div class="chart-group">
-              <div class="chart-bars">
-                <div class="bar obj" id="barObjMargen" style="height:20px"></div>
-                <div class="bar real" id="barRealMargen" style="height:20px"></div>
-              </div>
-              <div>Margen</div>
-            </div>
-          </div>
-          <div class="legend">
-            <span><i style="background:#60a5fa"></i>Objetivo</span>
-            <span><i style="background:#f4c430"></i>H/F</span>
-            <span><i style="background:#ef4444"></i>Gastos H/F</span>
-          </div>
-        </div>
-      </article>
-
-      <div class="side-stack">
-        <article class="panel">
+      <section class="hero">
+        <article class="panel hero-main">
           <div class="panel-inner">
-            <h3 class="panel-title">% Cumplimiento</h3>
-            <div class="progress-list">
-              <div class="progress-item">
-                <div class="progress-head"><span>Ventas</span><strong id="progVentasTxt">0%</strong></div>
-                <div class="progress-track"><div class="progress-fill" id="progVentas" style="width:0%"></div></div>
-              </div>
-              <div class="progress-item">
-                <div class="progress-head"><span>Cobranzas</span><strong id="progCobranzasTxt">0%</strong></div>
-                <div class="progress-track"><div class="progress-fill" id="progCobranzas" style="width:0%"></div></div>
-              </div>
-              <div class="progress-item">
-                <div class="progress-head"><span>Gastos</span><strong id="progGastosTxt">0%</strong></div>
-                <div class="progress-track"><div class="progress-fill" id="progGastos" style="width:0%"></div></div>
-              </div>
-              <div class="progress-item">
-                <div class="progress-head"><span>Margen</span><strong id="progMargenTxt">0%</strong></div>
-                <div class="progress-track"><div class="progress-fill" id="progMargen" style="width:0%"></div></div>
-              </div>
+            <div class="hero-kicker">% alcanzado global</div>
+            <div class="hero-value" id="objetivoTotal">0%</div>
+            <div class="hero-sub">
+              <span class="pill" id="cumplimientoGlobal">Cumplimiento global: 0%</span>
+              <span id="resumenHero">Promedio de alcance de ventas, cobranzas, gastos y margen.</span>
             </div>
           </div>
         </article>
 
         <article class="panel">
           <div class="panel-inner">
-            <h3 class="panel-title">Lectura ejecutiva</h3>
-            <div class="notes" id="lecturaEjecutiva">El dashboard actualizará este análisis en función de la diferencia entre objetivo y H/F, priorizando lectura rápida para gerencia.</div>
+            <h3 class="panel-title">Vista rápida</h3>
+            <div class="mini-bars">
+              <div class="mini-row">
+                <div class="name">Ventas</div>
+                <div class="track"><div class="fill" id="miniVentas" style="width:0%"></div></div>
+                <div id="miniVentasTxt">0%</div>
+              </div>
+              <div class="mini-row">
+                <div class="name">Cobranzas</div>
+                <div class="track"><div class="fill" id="miniCobranzas" style="width:0%"></div></div>
+                <div id="miniCobranzasTxt">0%</div>
+              </div>
+              <div class="mini-row">
+                <div class="name">Gastos</div>
+                <div class="track"><div class="fill" id="miniGastos" style="width:0%"></div></div>
+                <div id="miniGastosTxt">0%</div>
+              </div>
+              <div class="mini-row">
+                <div class="name">Margen</div>
+                <div class="track"><div class="fill" id="miniMargen" style="width:0%"></div></div>
+                <div id="miniMargenTxt">0%</div>
+              </div>
+            </div>
           </div>
         </article>
-      </div>
-    </section>
+      </section>
 
-    <section class="panel">
-      <div class="panel-inner">
-        <h3 class="panel-title">Detalle consolidado</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Indicador</th>
-              <th class="num">Objetivo</th>
-              <th class="num">H/F</th>
-              <th class="num">% Cumplimiento</th>
-              <th class="num">Desvío</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Ventas</td>
-              <td class="num" id="tblVentasObj">$ 0</td>
-              <td class="num" id="tblVentasReal">$ 0</td>
-              <td class="num" id="tblVentasPct">0%</td>
-              <td class="num" id="tblVentasDesvio">$ 0</td>
-            </tr>
-            <tr>
-              <td>Cobranzas</td>
-              <td class="num" id="tblCobranzasObj">$ 0</td>
-              <td class="num" id="tblCobranzasReal">$ 0</td>
-              <td class="num" id="tblCobranzasPct">0%</td>
-              <td class="num" id="tblCobranzasDesvio">$ 0</td>
-            </tr>
-            <tr>
-              <td>Gastos</td>
-              <td class="num" id="tblGastosObj">$ 0</td>
-              <td class="num" id="tblGastosReal">$ 0</td>
-              <td class="num" id="tblGastosPct">0%</td>
-              <td class="num" id="tblGastosDesvio">$ 0</td>
-            </tr>
-            <tr>
-              <td>Margen</td>
-              <td class="num" id="tblMargenObj">0%</td>
-              <td class="num" id="tblMargenReal">0%</td>
-              <td class="num" id="tblMargenPct">0%</td>
-              <td class="num" id="tblMargenDesvio">0 pp</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+      <section class="grid-kpis">
+        <article class="panel kpi">
+          <div class="kpi-head">
+            <div class="kpi-label">Ventas</div>
+            <div class="status warn" id="ventasStatus">Seguimiento</div>
+          </div>
+          <div class="kpi-value" id="ventas">$ 0</div>
+          <div class="kpi-meta">
+            <span>Objetivo: <strong id="ventasObj">$ 0</strong></span>
+            <span id="ventasPct">0%</span>
+          </div>
+        </article>
+
+        <article class="panel kpi">
+          <div class="kpi-head">
+            <div class="kpi-label">Cobranzas</div>
+            <div class="status warn" id="cobranzasStatus">Seguimiento</div>
+          </div>
+          <div class="kpi-value" id="cobranzas">$ 0</div>
+          <div class="kpi-meta">
+            <span>Objetivo: <strong id="cobranzasObj">$ 0</strong></span>
+            <span id="cobranzasPct">0%</span>
+          </div>
+        </article>
+
+        <article class="panel kpi">
+          <div class="kpi-head">
+            <div class="kpi-label">Gastos</div>
+            <div class="status alert" id="gastosStatus">Control</div>
+          </div>
+          <div class="kpi-value" id="gastos">$ 0</div>
+          <div class="kpi-meta">
+            <span>Objetivo: <strong id="gastosObj">$ 0</strong></span>
+            <span id="gastosPct">0%</span>
+          </div>
+        </article>
+
+        <article class="panel kpi">
+          <div class="kpi-head">
+            <div class="kpi-label">Margen</div>
+            <div class="status ok" id="margenStatus">Controlado</div>
+          </div>
+          <div class="kpi-value" id="margen">0%</div>
+          <div class="kpi-meta">
+            <span>Objetivo: <strong id="margenObj">0%</strong></span>
+            <span id="margenPct">0%</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-inner">
+          <h3 class="panel-title">Detalle consolidado</h3>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Indicador</th>
+                  <th class="num">Objetivo</th>
+                  <th class="num">H/F</th>
+                  <th class="num">% Cumplimiento</th>
+                  <th class="num">Desvío</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ventas</td>
+                  <td class="num" id="tblVentasObj">$ 0</td>
+                  <td class="num" id="tblVentasReal">$ 0</td>
+                  <td class="num" id="tblVentasPct">0%</td>
+                  <td class="num" id="tblVentasDesvio">$ 0</td>
+                </tr>
+                <tr>
+                  <td>Cobranzas</td>
+                  <td class="num" id="tblCobranzasObj">$ 0</td>
+                  <td class="num" id="tblCobranzasReal">$ 0</td>
+                  <td class="num" id="tblCobranzasPct">0%</td>
+                  <td class="num" id="tblCobranzasDesvio">$ 0</td>
+                </tr>
+                <tr>
+                  <td>Gastos</td>
+                  <td class="num" id="tblGastosObj">$ 0</td>
+                  <td class="num" id="tblGastosReal">$ 0</td>
+                  <td class="num" id="tblGastosPct">0%</td>
+                  <td class="num" id="tblGastosDesvio">$ 0</td>
+                </tr>
+                <tr>
+                  <td>Margen</td>
+                  <td class="num" id="tblMargenObj">0%</td>
+                  <td class="num" id="tblMargenReal">0%</td>
+                  <td class="num" id="tblMargenPct">0%</td>
+                  <td class="num" id="tblMargenDesvio">0 pp</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
-<script>
-  const SHEET_ID = "177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk";
-  const SHEET_GID = "0";
-  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
-  const REFRESH_MS = 30000;
+  <script>
+    // --- LÓGICA DE SEGURIDAD ---
+    const sessionKey = "viggo_mgmt_auth";
+    const loginScreen = document.getElementById("loginScreen");
+    const appWrapper = document.getElementById("appWrapper");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
 
-  function parseCSV(text) {
-    const rows = [];
-    let row = [];
-    let value = "";
-    let inQuotes = false;
+    function initApp() {
+      loadDashboard();
+      setInterval(loadDashboard, REFRESH_MS);
+    }
 
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      const next = text[i + 1];
-
-      if (char === '"') {
-        if (inQuotes && next === '"') {
-          value += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
-      } else if (char === "," && !inQuotes) {
-        row.push(value);
-        value = "";
-      } else if ((char === "\n" || char === "\r") && !inQuotes) {
-        if (char === "\r" && next === "\n") i++;
-        row.push(value);
-        rows.push(row);
-        row = [];
-        value = "";
-      } else {
-        value += char;
+    function checkSession() {
+      if (sessionStorage.getItem(sessionKey) === "true") {
+        loginScreen.classList.add("hidden");
+        appWrapper.classList.remove("hidden");
+        initApp();
       }
     }
 
-    if (value.length > 0 || row.length > 0) {
-      row.push(value);
-      rows.push(row);
+    function logout() {
+      sessionStorage.removeItem(sessionKey);
+      location.reload();
     }
 
-    return rows;
-  }
+    loginForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      loginError.style.display = "none";
+      const username = document.getElementById("authUsername").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
 
-  function getCell(rows, r, c) {
-    return rows?.[r]?.[c] ?? "";
-  }
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
 
-  function toNumber(value) {
-    if (value === null || value === undefined || value === "") return 0;
-    if (typeof value === "number") return value;
+        // Validamos que el rol sea 'management'
+        if (result.success && result.user.role === 'management') {
+          sessionStorage.setItem(sessionKey, "true");
+          loginScreen.classList.add("hidden");
+          appWrapper.classList.remove("hidden");
+          initApp();
+        } else {
+          loginError.textContent = result.message || "No tienes permisos de Gerencia.";
+          loginError.style.display = "block";
+        }
+      } catch (error) {
+        loginError.textContent = "Error de conexión con el servidor.";
+        loginError.style.display = "block";
+      }
+    });
 
-    const cleaned = String(value)
-      .trim()
-      .replace(/\s/g, "")
-      .replace(/\./g, "")
-      .replace(/,/g, ".")
-      .replace(/[^0-9.-]/g, "");
+    // --- LÓGICA DEL DASHBOARD ---
+    const SHEET_ID = "177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk";
+    const SHEET_GID = "0";
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+    const REFRESH_MS = 60000;
 
-    const num = parseFloat(cleaned);
-    return Number.isFinite(num) ? num : 0;
-  }
-
-  function normalizePercent(value) {
-    let pct = toNumber(value);
-    if (pct > 0 && pct <= 1) pct *= 100;
-    return pct;
-  }
-
-  function formatCurrency(value) {
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-      maximumFractionDigits: 0
-    }).format(value || 0);
-  }
-
-  function formatPercent(value) {
-    return `${Number(value || 0).toFixed(1)}%`;
-  }
-
-  function setText(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  }
-
-  function setWidth(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.style.width = `${Math.max(0, Math.min(100, value))}%`;
-  }
-
-  function setHeight(id, value) {
-    const el = document.getElementById(id);
-    if (el) el.style.height = `${Math.max(18, value)}px`;
-  }
-
-  function calcStatus(tipo, pct) {
-    if (tipo === "ventas") {
-      return pct < 60
-        ? { text: "Alerta", cls: "alert" }
-        : { text: "OK", cls: "ok" };
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], value = "", inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i], next = text[i + 1];
+        if (char === '"') {
+          if (inQuotes && next === '"') { value += '"'; i++; } 
+          else inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) { row.push(value); value = ""; } 
+        else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(value); rows.push(row); row = []; value = "";
+        } else value += char;
+      }
+      if (value.length > 0 || row.length > 0) { row.push(value); rows.push(row); }
+      return rows;
     }
 
-    if (tipo === "gastos") {
-      return pct > 85
-        ? { text: "Alerta", cls: "alert" }
-        : { text: "OK", cls: "ok" };
+    function toNumber(value) {
+      if (!value) return 0;
+      const cleaned = String(value).replace(/\s/g, "").replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.-]/g, "");
+      const num = parseFloat(cleaned);
+      return isFinite(num) ? num : 0;
     }
 
-    if (tipo === "margen") {
-      return pct < 65
-        ? { text: "Alerta", cls: "alert" }
-        : { text: "OK", cls: "ok" };
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(value || 0);
     }
 
-    if (tipo === "cobranzas") {
-      return pct < 60
-        ? { text: "Alerta", cls: "alert" }
-        : pct < 85
-          ? { text: "Seguimiento", cls: "warn" }
-          : { text: "OK", cls: "ok" };
+    function formatPercent(value) { return `${Number(value || 0).toFixed(1)}%`; }
+    function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+    function setWidth(id, val) { const el = document.getElementById(id); if (el) el.style.width = `${Math.max(0, Math.min(100, val))}%`; }
+
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`${CSV_URL}&t=${Date.now()}`);
+        const text = await response.text();
+        const rows = parseCSV(text);
+
+        const mes = rows[0]?.[2] || "-";
+        const ventasObj = toNumber(rows[3]?.[1]), cobranzasObj = toNumber(rows[3]?.[2]), gastosObj = toNumber(rows[3]?.[3]), margenObj = toNumber(rows[3]?.[4]);
+        const ventasReal = toNumber(rows[7]?.[1]), cobranzasReal = toNumber(rows[7]?.[2]), gastosReal = toNumber(rows[7]?.[3]), margenReal = toNumber(rows[7]?.[4]);
+        const vPct = toNumber(rows[11]?.[1]), cPct = toNumber(rows[11]?.[2]), gPct = toNumber(rows[11]?.[3]), mPct = toNumber(rows[11]?.[4]);
+
+        const global = (vPct + cPct + gPct + mPct) / 4;
+
+        setText("mes", mes);
+        setText("objetivoTotal", formatPercent(global));
+        setText("ventas", formatCurrency(ventasReal));
+        setText("ventasObj", formatCurrency(ventasObj));
+        setText("ventasPct", formatPercent(vPct));
+        setText("cobranzas", formatCurrency(cobranzasReal));
+        setText("cobranzasObj", formatCurrency(cobranzasObj));
+        setText("cobranzasPct", formatPercent(cPct));
+        setText("gastos", formatCurrency(gastosReal));
+        setText("gastosObj", formatCurrency(gastosObj));
+        setText("gastosPct", formatPercent(gPct));
+        setText("margen", formatPercent(margenReal));
+
+        setWidth("miniVentas", vPct); setText("miniVentasTxt", formatPercent(vPct));
+        setWidth("miniCobranzas", cPct); setText("miniCobranzasTxt", formatPercent(cPct));
+        setWidth("miniGastos", gPct); setText("miniGastosTxt", formatPercent(gPct));
+        setWidth("miniMargen", mPct); setText("miniMargenTxt", formatPercent(mPct));
+
+        setText("tblVentasObj", formatCurrency(ventasObj)); setText("tblVentasReal", formatCurrency(ventasReal)); setText("tblVentasPct", formatPercent(vPct));
+        setText("tblCobranzasObj", formatCurrency(cobranzasObj)); setText("tblCobranzasReal", formatCurrency(cobranzasReal)); setText("tblCobranzasPct", formatPercent(cPct));
+        setText("tblGastosObj", formatCurrency(gastosObj)); setText("tblGastosReal", formatCurrency(gastosReal)); setText("tblGastosPct", formatPercent(gPct));
+      } catch (e) { console.error("Error cargando dashboard", e); }
     }
 
-    return { text: "Seguimiento", cls: "warn" };
-  }
-
-  function setStatus(id, status) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = status.text;
-    el.className = `status ${status.cls}`;
-  }
-
-  async function loadDashboard() {
-    const response = await fetch(`${CSV_URL}&t=${Date.now()}`, { cache: "no-store" });
-    const text = await response.text();
-    const rows = parseCSV(text);
-
-    // C1
-    const mes = getCell(rows, 0, 2) || "Mes";
-
-    // B4:E4
-    const ventasObj = toNumber(getCell(rows, 3, 1));
-    const cobranzasObj = toNumber(getCell(rows, 3, 2));
-    const gastosObj = toNumber(getCell(rows, 3, 3));
-    const margenObj = normalizePercent(getCell(rows, 3, 4));
-
-    // B8:E8
-    const ventasReal = toNumber(getCell(rows, 7, 1));
-    const cobranzasReal = toNumber(getCell(rows, 7, 2));
-    const gastosReal = toNumber(getCell(rows, 7, 3));
-    const margenReal = normalizePercent(getCell(rows, 7, 4));
-
-    // B12:E12
-    const ventasPct = normalizePercent(getCell(rows, 11, 1));
-    const cobranzasPct = normalizePercent(getCell(rows, 11, 2));
-    const gastosPct = normalizePercent(getCell(rows, 11, 3));
-    const margenPct = normalizePercent(getCell(rows, 11, 4));
-
-    const cumplimientoGlobal = (ventasPct + cobranzasPct + gastosPct + margenPct) / 4;
-
-    setText("mes", mes);
-    setText("objetivoTotal", formatPercent(cumplimientoGlobal));
-    setText("cumplimientoGlobal", `Cumplimiento global: ${formatPercent(cumplimientoGlobal)}`);
-    setText("resumenHero", "Promedio de alcance de ventas, cobranzas, gastos y margen.");
-
-    setText("ventas", formatCurrency(ventasReal));
-    setText("cobranzas", formatCurrency(cobranzasReal));
-    setText("gastos", formatCurrency(gastosReal));
-    setText("margen", formatPercent(margenReal));
-
-    setText("ventasObj", formatCurrency(ventasObj));
-    setText("cobranzasObj", formatCurrency(cobranzasObj));
-    setText("gastosObj", formatCurrency(gastosObj));
-    setText("margenObj", formatPercent(margenObj));
-
-    setText("ventasPct", formatPercent(ventasPct));
-    setText("cobranzasPct", formatPercent(cobranzasPct));
-    setText("gastosPct", formatPercent(gastosPct));
-    setText("margenPct", formatPercent(margenPct));
-
-    setWidth("miniVentas", ventasPct);
-    setText("miniVentasTxt", formatPercent(ventasPct));
-
-    setWidth("miniCobranzas", cobranzasPct);
-    setText("miniCobranzasTxt", formatPercent(cobranzasPct));
-
-    setWidth("miniGastos", Math.min(gastosPct, 100));
-    setText("miniGastosTxt", formatPercent(gastosPct));
-
-    setWidth("miniMargen", margenPct);
-    setText("miniMargenTxt", formatPercent(margenPct));
-
-    setWidth("progVentas", ventasPct);
-    setText("progVentasTxt", formatPercent(ventasPct));
-
-    setWidth("progCobranzas", cobranzasPct);
-    setText("progCobranzasTxt", formatPercent(cobranzasPct));
-
-    setWidth("progGastos", Math.min(gastosPct, 100));
-    setText("progGastosTxt", formatPercent(gastosPct));
-
-    setWidth("progMargen", margenPct);
-    setText("progMargenTxt", formatPercent(margenPct));
-
-    const maxMoney = Math.max(
-      ventasObj, cobranzasObj, gastosObj,
-      ventasReal, cobranzasReal, gastosReal, 1
-    );
-    const maxPct = Math.max(margenObj, margenReal, 1);
-
-    setHeight("barObjVentas", (ventasObj / maxMoney) * 240);
-    setHeight("barRealVentas", (ventasReal / maxMoney) * 240);
-
-    setHeight("barObjCobranzas", (cobranzasObj / maxMoney) * 240);
-    setHeight("barRealCobranzas", (cobranzasReal / maxMoney) * 240);
-
-    setHeight("barObjGastos", (gastosObj / maxMoney) * 240);
-    setHeight("barRealGastos", (gastosReal / maxMoney) * 240);
-
-    setHeight("barObjMargen", (margenObj / maxPct) * 240);
-    setHeight("barRealMargen", (margenReal / maxPct) * 240);
-
-    setStatus("ventasStatus", calcStatus("ventas", ventasPct));
-    setStatus("cobranzasStatus", calcStatus("cobranzas", cobranzasPct));
-    setStatus("gastosStatus", calcStatus("gastos", gastosPct));
-    setStatus("margenStatus", calcStatus("margen", margenPct));
-
-    setText("tblVentasObj", formatCurrency(ventasObj));
-    setText("tblVentasReal", formatCurrency(ventasReal));
-    setText("tblVentasPct", formatPercent(ventasPct));
-    setText("tblVentasDesvio", formatCurrency(ventasReal - ventasObj));
-
-    setText("tblCobranzasObj", formatCurrency(cobranzasObj));
-    setText("tblCobranzasReal", formatCurrency(cobranzasReal));
-    setText("tblCobranzasPct", formatPercent(cobranzasPct));
-    setText("tblCobranzasDesvio", formatCurrency(cobranzasReal - cobranzasObj));
-
-    setText("tblGastosObj", formatCurrency(gastosObj));
-    setText("tblGastosReal", formatCurrency(gastosReal));
-    setText("tblGastosPct", formatPercent(gastosPct));
-    setText("tblGastosDesvio", formatCurrency(gastosReal - gastosObj));
-
-    setText("tblMargenObj", formatPercent(margenObj));
-    setText("tblMargenReal", formatPercent(margenReal));
-    setText("tblMargenPct", formatPercent(margenPct));
-    setText("tblMargenDesvio", `${(margenReal - margenObj).toFixed(1)} pp`);
-
-    const lectura = [];
-    lectura.push(
-      ventasPct < 60
-        ? "Ventas en alerta: el avance está por debajo del 60% del objetivo."
-        : "Ventas en parámetro aceptable según el umbral definido."
-    );
-    lectura.push(
-      cobranzasPct < 60
-        ? "Cobranzas en nivel bajo y requieren seguimiento."
-        : "Cobranzas con avance razonable para el criterio actual."
-    );
-    lectura.push(
-      gastosPct > 85
-        ? "Gastos en alerta: superan el umbral del 85%."
-        : "Gastos en rango correcto: se mantienen por debajo del 85%."
-    );
-    lectura.push(
-      margenPct < 65
-        ? "Margen en alerta: está por debajo del 65%."
-        : "Margen en rango correcto: se mantiene igual o por encima del 65%."
-    );
-    lectura.push(`Actualización automática cada ${Math.round(REFRESH_MS / 1000)} segundos.`);
-
-    setText("lecturaEjecutiva", lectura.join(" "));
-  }
-
-  loadDashboard().catch((error) => {
-    console.error(error);
-    setText("lecturaEjecutiva", "No se pudieron cargar los datos del Google Sheet. Verificá que siga compartido como lector para cualquiera con el enlace.");
-  });
-
-  setInterval(() => {
-    loadDashboard().catch((error) => console.error(error));
-  }, REFRESH_MS);
-</script>
-
-  </body>
+    checkSession();
+  </script>
+</body>
 </html>
-
