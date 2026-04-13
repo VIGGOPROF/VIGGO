@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Viggo - Acceso Especial Evento Viggo Professional Chile</title>
+    <style>
+        :root {
+            --bg-overlay: rgba(15, 23, 42, 0.85); 
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border-color: #475569;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('IMG6.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px; 
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-overlay);
+            z-index: -1;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .header-text {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-text h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .header-text p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(15, 23, 42, 0.8);
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+            color: #94a3b8;
+        }
+
+        #success-section {
+            display: none;
+            text-align: center;
+        }
+
+        .success-icon {
+            color: var(--success);
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        #success-section h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .credentials-box {
+            background-color: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: center; 
+        }
+
+        .credentials-box p {
+            margin: 12px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .credentials-box span {
+            display: block;
+            margin-top: 4px;
+            color: #ffffff;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            letter-spacing: 1px;
+            background-color: #000;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .action-link {
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+            background-color: var(--success);
+            color: white;
+            padding: 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background-color 0.3s ease;
+            white-space: normal; 
+            line-height: 1.4;
+        }
+
+        .action-link:hover {
+            background-color: #059669;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+            .header-text h1 {
+                font-size: 20px;
+            }
+            .action-link {
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="logo-container">
+            <img src="logoviggo.png" alt="Viggo">
+        </div>
+
+        <div id="form-section">
+            <div class="header-text">
+                <h1>Accede al Libro "Estructura" by BASCLIPPER</h1>
+                <p>Ingresa tus datos para generar tus credenciales. Exclusivo Chile 🇨🇱.</p>
+            </div>
+
+            <form id="lead-form">
+                <div class="form-group">
+                    <label>Nombre y Apellido</label>
+                    <input type="text" name="nombre_completo" required placeholder="Tu nombre completo">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" name="telefono" required placeholder="+56 9 ...">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" required placeholder="tu@correo.com">
+                </div>
+                <button type="submit" id="submit-btn">Obtener Credenciales</button>
+            </form>
+        </div>
+
+        <div id="success-section">
+            <div class="success-icon">✓</div>
+            <h2>¡Tu acceso está listo!</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Utiliza estos datos exactos para ingresar al libro.</p>
+            
+            <div class="credentials-box">
+                <p>USUARIO: <span id="display-user">basty</span></p>
+                <p>CONTRASEÑA: <span id="display-pass">templo25</span></p>
+            </div>
+
+            <a href="https://heyzine.com/flip-book/0483ac3ced.html" target="_blank" class="action-link">
+                Clicl aquí para ingresar y ver libro "Estructura by BAS"
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Enlace de Google Apps Script integrado
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxlmnuu34IebcwCyemRVe047qaTcOmxaV3arzms7j_iFQljGqW7aJEJoeNdCz-IKUN6Yg/exec'; 
+        
+        const form = document.getElementById('lead-form');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault(); 
+            
+            submitBtn.textContent = 'Procesando...';
+            submitBtn.disabled = true;
+
+            const requestBody = new FormData(form);
+
+            fetch(scriptURL, { method: 'POST', body: requestBody })
+                .then(response => {
+                    document.getElementById('form-section').style.display = 'none';
+                    document.getElementById('success-section').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error al conectar con la base de datos.");
+                    submitBtn.textContent = 'Obtener Credenciales';
+                    submitBtn.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>

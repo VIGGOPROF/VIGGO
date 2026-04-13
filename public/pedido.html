@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nota de pedido Viggo</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --brand: #0f5132;
+      --brand-2: #13653f;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--line);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-viggo {
+      height: 48px;
+      width: auto;
+    }
+
+    /* Estilo para el nombre del cliente arriba en grande */
+    .client-header {
+      padding: 24px 24px 0 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .client-title-large {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--brand);
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    .content { padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #374151;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 0 18px;
+    }
+
+    .export-btn {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--brand);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .table-wrap { overflow: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f9fafb;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    tbody td { padding: 12px 14px; border-bottom: 1px solid #edf0f2; vertical-align: middle; }
+
+    .thumb { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; background: #f3f4f6; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .qty-input {
+      width: 80px;
+      height: 40px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 860px) {
+      .client-title-large { font-size: 26px; }
+      .filters { grid-template-columns: 1fr; }
+      
+      /* Oculta: Código (2), Descripción (4), Unidades x Bulto (5) */
+      th:nth-child(2), td:nth-child(2),
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(5), td:nth-child(5) {
+        display: none;
+      }
+
+      table { min-width: 100%; }
+      .thumb { width: 50px; height: 50px; }
+      .qty-input { width: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <img src="logoviggo.png" alt="Viggo" class="logo-viggo" />
+        <div>
+          <h1 style="font-size: 18px; margin: 0;">Nota de Pedido</h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="client-header">
+      <h2 id="displayClientName" class="client-title-large">CLIENTE</h2>
+    </div>
+
+    <main class="content">
+      <div class="filters">
+        <div class="field">
+          <label>Buscar Producto</label>
+          <input id="searchInput" type="text" placeholder="Código o nombre..." />
+        </div>
+        <div class="field">
+          <button id="exportExcelBtn" class="export-btn">Descargar Pedido (Excel)</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Unidades x Bulto</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+        <div id="loadingState" style="text-align:center; padding: 40px;">Cargando productos...</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let products = [];
+    const quantities = {};
+    const sheetId = "1sCJBeTERjfRNB1SLD47WE0O-LIbOG99wEA-Drkpc-dQ";
+    const googleSheetJsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=0`;
+
+    // Capturar nombre del cliente de la URL
+    function initClientName() {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get('cliente') || sessionStorage.getItem('viggo_client_name') || "Cliente";
+      document.getElementById('displayClientName').textContent = name;
+    }
+
+    async function loadProducts() {
+      try {
+        const response = await fetch(googleSheetJsonUrl);
+        const text = await response.text();
+        const json = JSON.parse(text.substring(47, text.length - 2));
+        const rows = json.table.rows;
+
+        products = rows.map(r => ({
+          codigo: r.c[0]?.v || "",
+          img: r.c[1]?.v || "",
+          producto: r.c[2]?.v || "",
+          descripcion: r.c[3]?.v || "",
+          unidades: r.c[4]?.v || ""
+        })).filter(p => p.producto);
+
+        document.getElementById('loadingState').style.display = 'none';
+        renderTable();
+      } catch (e) {
+        console.error("Error:", e);
+      }
+    }
+
+    function renderTable() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const tbody = document.getElementById('productsTableBody');
+      tbody.innerHTML = "";
+
+      products.filter(p => p.producto.toLowerCase().includes(search) || p.codigo.toLowerCase().includes(search))
+      .forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="thumb"><img src="${p.img}" onerror="this.src='placeholder.png'"></div></td>
+          <td>${p.codigo}</td>
+          <td style="font-weight:bold;">${p.producto}</td>
+          <td style="color:#666; font-size:12px;">${p.descripcion}</td>
+          <td>${p.unidades}</td>
+          <td>
+            <input type="number" class="qty-input" min="0" 
+              value="${quantities[p.codigo] || ''}" 
+              onchange="updateQty('${p.codigo}', this.value)">
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateQty(code, val) {
+      if (val > 0) quantities[code] = val;
+      else delete quantities[code];
+    }
+
+    document.getElementById('searchInput').oninput = renderTable;
+
+    document.getElementById('exportExcelBtn').onclick = () => {
+      const items = products.filter(p => quantities[p.codigo]);
+      if (items.length === 0) return alert("Selecciona al menos un producto");
+      
+      if (!confirm("¿Deseas descargar el pedido en Excel?")) return;
+
+      const client = document.getElementById('displayClientName').textContent;
+      const data = [["Cliente:", client], ["Fecha:", new Date().toLocaleDateString()], [], ["Código", "Producto", "Cantidad"]];
+      items.forEach(p => data.push([p.codigo, p.producto, quantities[p.codigo]]));
+
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Pedido");
+      XLSX.writeFile(wb, `Pedido_${client}.xlsx`);
+    };
+
+    initClientName();
+    loadProducts();
+  </script>
+</body>
+</html>
