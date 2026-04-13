@@ -586,16 +586,12 @@
   <script>
     const CONFIG = {
       refreshMs: 7200000,
-
       auth: {
         storageKey: "viggo_hub_auth"
       },
-
       salesSheetUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
-
       mgmtSheetId: "177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk",
       mgmtSheetGid: "0",
-
       sellers: [
         { summaryName: "GABRIEL SIGALI", clientName: "GABRIEL SIGALI", label: "Gabriel", file: "sellers.html", type: "seller" },
         { summaryName: "ANABELLA MADINA", clientName: "ANABELLA MADINA", label: "Anabella", file: "sellers.html", type: "seller" },
@@ -603,25 +599,13 @@
         { summaryName: "MARIANO MARTINEZ DAN", clientName: "MARIANO MARTINEZ DAN", label: "Mariano", file: "sellers.html", type: "seller" },
         { label: "Gerencias", file: "gerencia.html", type: "management" }
       ],
-
       summaryColumns: {
-        seller: "VENDEDOR",
-        goal: "OBJETIVO",
-        actual: "FACT HASTA LA FECHA",
-        pct: "% ALCANZADO"
+        seller: "VENDEDOR", goal: "OBJETIVO", actual: "FACT HASTA LA FECHA", pct: "% ALCANZADO"
       },
-
       clientColumns: {
-        client: "Cliente",
-        seller: "Vend. Cliente",
-        actual: "MES ACTUAL",
-        goal: "OBJ MES"
+        client: "Cliente", seller: "Vend. Cliente", actual: "MES ACTUAL", goal: "OBJ MES"
       },
-
-      thresholds: {
-        ok: 90,
-        follow: 70
-      }
+      thresholds: { ok: 90, follow: 70 }
     };
 
     function parseCSV(text){
@@ -666,14 +650,7 @@
       if(value == null) return 0;
       let s = String(value).trim();
       if(!s) return 0;
-      s = s.replace(/\s/g, "");
-      s = s.replace(/\$/g, "");
-      s = s.replace(/USD/gi, "");
-      s = s.replace(/ARS/gi, "");
-      s = s.replace(/%/g, "");
-      s = s.replace(/\./g, "");
-      s = s.replace(/,/g, ".");
-      s = s.replace(/[^\d.-]/g, "");
+      s = s.replace(/\s/g, "").replace(/\$/g, "").replace(/USD/gi, "").replace(/ARS/gi, "").replace(/%/g, "").replace(/\./g, "").replace(/,/g, ".").replace(/[^\d.-]/g, "");
       const n = parseFloat(s);
       return isNaN(n) ? 0 : n;
     }
@@ -684,23 +661,14 @@
     }
 
     function formatCurrency(value){
-      return new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: "ARS",
-        maximumFractionDigits: 2
-      }).format(Number(value || 0));
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 2 }).format(Number(value || 0));
     }
 
     function formatPercent(value){
-      return new Intl.NumberFormat("es-AR", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
-      }).format(Number(value || 0)) + "%";
+      return new Intl.NumberFormat("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0)) + "%";
     }
 
-    function nowLabel(){
-      return new Date().toLocaleString("es-AR");
-    }
+    function nowLabel(){ return new Date().toLocaleString("es-AR"); }
 
     function getStatusClass(pct){
       if(pct >= CONFIG.thresholds.ok) return "ok";
@@ -720,9 +688,7 @@
       return "linear-gradient(90deg,#dc2626,#ef4444)";
     }
 
-    function clampPercent(n){
-      return Math.max(0, Math.min(n, 100));
-    }
+    function clampPercent(n){ return Math.max(0, Math.min(n, 100)); }
 
     function safeRatio(actual, goal){
       if(goal <= 0) return 0;
@@ -740,15 +706,10 @@
         for(const h of requiredHeaders){
           if(normalized.includes(String(h).trim().toLowerCase())) score++;
         }
-        if(score > bestScore){
-          bestScore = score;
-          bestRow = r;
-        }
+        if(score > bestScore){ bestScore = score; bestRow = r; }
       }
 
-      if(bestRow < 0 || bestScore <= 0){
-        return { records: [] };
-      }
+      if(bestRow < 0 || bestScore <= 0){ return { records: [] }; }
 
       const header = rows[bestRow] || [];
       const records = [];
@@ -779,17 +740,8 @@
     }
 
     function buildSalesData(rows){
-      const summaryHeaders = [
-        CONFIG.summaryColumns.seller,
-        CONFIG.summaryColumns.goal
-      ];
-
-      const clientHeaders = [
-        CONFIG.clientColumns.client,
-        CONFIG.clientColumns.seller,
-        CONFIG.clientColumns.actual,
-        CONFIG.clientColumns.goal
-      ];
+      const summaryHeaders = [ CONFIG.summaryColumns.seller, CONFIG.summaryColumns.goal ];
+      const clientHeaders = [ CONFIG.clientColumns.client, CONFIG.clientColumns.seller, CONFIG.clientColumns.actual, CONFIG.clientColumns.goal ];
 
       const summaryTable = extractTableByHeaders(rows, summaryHeaders);
       const clientTable = extractTableByHeaders(rows, clientHeaders);
@@ -815,19 +767,11 @@
           const goal = summaryMap[cfg.summaryName]?.goal || 0;
           const actual = clientTotals[cfg.clientName] || 0;
           const pct = safeRatio(actual, goal);
-          return {
-            ...cfg,
-            actual,
-            goal,
-            pct,
-            collections: 0
-          };
+          return { ...cfg, actual, goal, pct, collections: 0 };
         });
     }
 
-    function getCell(rows, r, c){
-      return rows?.[r]?.[c] ?? "";
-    }
+    function getCell(rows, r, c){ return rows?.[r]?.[c] ?? ""; }
 
     function buildManagementData(rows){
       const mes = getCell(rows, 0, 2) || "-";
@@ -851,21 +795,9 @@
       const facturacionTotalHF = toNumber(getCell(rows, 14, 1));
 
       return {
-        mes,
-        fechaActualizacion,
-        ventasObj,
-        cobranzasObj,
-        gastosObj,
-        margenObj,
-        ventasReal,
-        cobranzasReal,
-        gastosReal,
-        margenReal,
-        ventasPct,
-        cobranzasPct,
-        gastosPct,
-        margenPct,
-        facturacionTotalHF
+        mes, fechaActualizacion, ventasObj, cobranzasObj, gastosObj, margenObj,
+        ventasReal, cobranzasReal, gastosReal, margenReal, ventasPct, cobranzasPct,
+        gastosPct, margenPct, facturacionTotalHF
       };
     }
 
@@ -886,32 +818,31 @@
       document.getElementById("lastUpdate").textContent = mgmt.fechaActualizacion || "-";
 
       const cards = [
-        ...vendorData,
-        {
-          label: "Gerencias",
-          file: "gerencia.html",
-          type: "management",
-          actual: mgmt.ventasReal,
-          goal: mgmt.ventasObj,
-          pct: mgmt.ventasPct,
-          collections: mgmt.cobranzasReal,
-          expenses: mgmt.gastosReal
-        }
+        { label: "Gerencias", file: "gerencia.html", type: "management", actual: mgmt.ventasReal, goal: mgmt.ventasObj, pct: mgmt.ventasPct, collections: mgmt.cobranzasReal, expenses: mgmt.gastosReal },
+        { label: "Administrar Usuarios", file: "admin.html", type: "admin", actual: 0, goal: 0, pct: 0 },
+        { label: "Lista Precios AR", file: "PRECIOS.HTML", type: "prices", actual: 0, goal: 0, pct: 0 },
+        ...vendorData
       ];
 
       cards.forEach(item => {
-        const isManagement = item.type === "management";
-        const statusClass = isManagement ? "neutral" : getStatusClass(item.pct);
-        const statusText = isManagement ? "Vista ejecutiva" : getStatusText(item.pct);
+        const isSeller = item.type === "seller";
+        const statusClass = isSeller ? getStatusClass(item.pct) : "neutral";
+        const statusText = isSeller ? getStatusText(item.pct) : (item.type === "management" ? "Ejecutivo" : "Acceso Directo");
 
-        const extraStat = isManagement
-          ? `
-            <div class="stat-box">
-              <div class="stat-label">Gastos H/F</div>
-              <div class="stat-value">${formatCurrency(item.expenses)}</div>
+        const progressHTML = isSeller ? `
+          <div class="progress-wrap">
+            <div class="progress-card">
+              <div class="progress-head"><div class="progress-title">% cumplimiento ventas</div><div class="progress-value">${formatPercent(item.pct)}</div></div>
+              <div class="progress-track"><div class="progress-fill" style="width:${clampPercent(item.pct)}%; background:${progressColor(item.pct)};"></div></div>
+              <div class="progress-foot"><span>${formatCurrency(item.actual)}</span><span>${formatCurrency(item.goal)}</span></div>
             </div>
-          `
-          : "";
+          </div>
+        ` : (item.type === "management" ? `
+          <div class="stats" style="margin-top: 10px;">
+            <div class="stat-box"><div class="stat-label">Ventas H/F</div><div class="stat-value">${formatCurrency(item.actual)}</div></div>
+            <div class="stat-box"><div class="stat-label">Gastos H/F</div><div class="stat-value">${formatCurrency(item.expenses)}</div></div>
+          </div>
+        ` : `<div class="muted" style="font-size:13px; margin: 10px 0 20px;">Haga clic en ingresar para administrar la plataforma.</div>`);
 
         const card = document.createElement("article");
         card.className = "card card-pad seller-card";
@@ -920,41 +851,13 @@
           <div class="seller-top">
             <div>
               <h3 class="seller-name">${item.label}</h3>
-              <div class="seller-role">${isManagement ? "Dashboard ejecutivo general" : "Dashboard individual del vendedor"}</div>
+              <div class="seller-role">${isSeller ? "Dashboard individual del vendedor" : (item.type === "management" ? "Dashboard global gerencial" : "Módulo de gestión")}</div>
             </div>
             <div class="status-chip ${statusClass}">${statusText}</div>
           </div>
-
-          <div class="stats">
-            <div class="stat-box">
-              <div class="stat-label">${isManagement ? "Ventas + Reservas totales" : "Ventas H/F"}</div>
-              <div class="stat-value">${formatCurrency(item.actual)}</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">${isManagement ? "Objetivo total equipo" : "Objetivo ventas"}</div>
-              <div class="stat-value">${formatCurrency(item.goal)}</div>
-            </div>
-                      ${extraStat}
-          </div>
-
-          <div class="progress-wrap">
-            <div class="progress-card">
-              <div class="progress-head">
-                <div class="progress-title">% cumplimiento ventas</div>
-                <div class="progress-value">${formatPercent(item.pct)}</div>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style="width:${clampPercent(item.pct)}%; background:${progressColor(item.pct)};"></div>
-              </div>
-              <div class="progress-foot">
-                <span>${formatCurrency(item.actual)}</span>
-                <span>${formatCurrency(item.goal)}</span>
-              </div>
-            </div>
-          </div>
-
+          ${progressHTML}
           <div class="actions">
-            <a class="btn" href="${item.file}">Ingresar al dashboard</a>
+            <a class="btn" href="${item.file}" ${item.type === "prices" ? 'target="_blank"' : ''}>Ingresar</a>
           </div>
         `;
 
@@ -1018,15 +921,15 @@
       return localStorage.getItem(CONFIG.auth.storageKey) === "1";
     }
 
+    // --- NUEVO SISTEMA DE LOGIN CON DB ---
     document.getElementById("loginForm").addEventListener("submit", async function(e){
       e.preventDefault();
       const user = document.getElementById("username").value.trim();
       const pass = document.getElementById("password").value.trim();
       const error = document.getElementById("loginError");
+      const submitBtn = e.target.querySelector("button[type='submit']");
 
       error.style.display = "none";
-      const submitBtn = e.target.querySelector("button[type='submit']");
-      const originalText = submitBtn.textContent;
       submitBtn.textContent = "Validando...";
       submitBtn.disabled = true;
 
@@ -1039,17 +942,18 @@
         const result = await response.json();
 
         if (result.success && result.user.role === 'management') {
+          error.style.display = "none";
           setLoggedIn();
           showDashboard();
         } else {
-          error.textContent = result.message || "No tenés permiso de gerencia para acceder a este Hub.";
+          error.textContent = result.message || "No tienes permisos de Gerencia.";
           error.style.display = "block";
         }
       } catch (err) {
         error.textContent = "Error de conexión con el servidor.";
         error.style.display = "block";
       } finally {
-        submitBtn.textContent = originalText;
+        submitBtn.textContent = "Ingresar";
         submitBtn.disabled = false;
       }
     });
