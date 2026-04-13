@@ -1,238 +1,1425 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Ventas - Viggo Professional</title>
-    <style>
-        :root { --brand: #0f5132; --bg: #f4f7fb; --panel: #ffffff; --text: #16202c; --muted: #6b7787; --line: #e5ebf3; --shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .hidden { display: none !important; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Comercial Vendedores Viggo</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --panel-soft:#f8fbff;
+      --text:#16202c;
+      --muted:#6b7787;
+      --line:#e5ebf3;
+      --shadow:0 10px 28px rgba(15,23,42,.08);
+      --radius:18px;
 
-        /* Login */
-        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center; }
-        .login-card img { max-width: 150px; margin-bottom: 20px; }
-        .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: var(--muted); text-transform: uppercase; }
-        .form-input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; }
-        .btn-login { width: 100%; padding: 14px; background: var(--brand); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+      --ok:#16a34a;
+      --ok-soft:#dcfce7;
+      --follow:#d97706;
+      --follow-soft:#fef3c7;
+      --alert:#dc2626;
+      --alert-soft:#fee2e2;
+      --neutral:#64748b;
+      --neutral-soft:#e2e8f0;
+    }
 
-        /* Dashboard */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .stat-label { font-size: 11px; color: var(--muted); font-weight: bold; text-transform: uppercase; }
-        .stat-value { font-size: 28px; font-weight: 900; margin-top: 5px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
-        th { color: var(--muted); font-size: 11px; text-transform: uppercase; background: #f9fafb; }
-        tr:hover { background: #f8fbff; }
-        .back-btn { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--brand); font-weight: bold; font-size: 14px; }
-        
-        .status-ok { color: #16a34a; font-weight: bold; }
-        .status-warn { color: #d97706; font-weight: bold; }
-        .status-alert { color: #dc2626; font-weight: bold; }
-    </style>
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    body{padding:22px}
+
+    .hidden { display: none !important; }
+
+    /* --- ESTILOS DEL LOGIN --- */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg);
+      z-index: 1000;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(15,23,42,.12);
+      padding: 34px 28px;
+    }
+
+    .login-logo {
+      max-width: 180px;
+      margin: 0 auto 20px auto;
+      display: block;
+    }
+
+    .login-title {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .login-subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: #16202c;
+      box-shadow: 0 0 0 3px rgba(22, 32, 44, 0.12);
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 14px;
+      background: #16202c;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: .2s ease;
+    }
+    
+    .login-btn:hover { background: #334155; }
+
+    .login-error {
+      display: none;
+      margin: 0 0 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* --- ESTILOS DEL DASHBOARD --- */
+    .container{
+      width:100%;
+      max-width:1500px;
+      margin:0 auto;
+    }
+
+    .grid{display:grid;gap:18px}
+
+    .header{
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      min-width:0;
+      width:100%;
+      max-width:100%;
+    }
+
+    .card-pad{padding:20px}
+
+    .title-xl{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+    .title-lg{font-size:20px;font-weight:800;letter-spacing:-.01em;margin:0 0 10px}
+    .title-md{font-size:15px;font-weight:700;margin:0 0 12px}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+
+    .meta{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .meta-item{
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      min-width:0;
+    }
+
+    .meta-label{
+      font-size:11px;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    }
+
+    .meta-value{
+      font-size:14px;
+      font-weight:700;
+      overflow-wrap:anywhere;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:18px;
+    }
+
+    .hero-main{
+      background:linear-gradient(135deg,#eff6ff 0%,#ffffff 100%);
+      border:1px solid #dbeafe;
+    }
+
+    .hero-kpi{
+      font-size:58px;
+      font-weight:900;
+      line-height:1;
+      letter-spacing:-.04em;
+      margin:10px 0 8px;
+      overflow-wrap:anywhere;
+    }
+
+    .hero-row{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .mini{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      min-width:0;
+    }
+
+    .mini-label{
+      font-size:11px;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    }
+
+    .mini-value{
+      font-size:20px;
+      font-weight:800;
+      line-height:1.2;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .status-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      border:1px solid transparent;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+
+    .ok{background:var(--ok-soft);color:var(--ok);border-color:#bbf7d0}
+    .follow{background:var(--follow-soft);color:var(--follow);border-color:#fde68a}
+    .alert{background:var(--alert-soft);color:var(--alert);border-color:#fecaca}
+    .neutral{background:var(--neutral-soft);color:var(--neutral);border-color:#cbd5e1}
+
+    .value-positive{color:var(--ok)}
+    .value-negative{color:var(--alert)}
+    .value-neutral{color:var(--text)}
+
+    .kpi-grid{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .kpi-card{
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .kpi-card::after{
+      content:"";
+      position:absolute;
+      right:-18px;
+      top:-18px;
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      background:rgba(37,99,235,.06);
+    }
+
+    .kpi-label{
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--muted);
+      margin-bottom:8px;
+      position:relative;
+      z-index:1;
+    }
+
+    .kpi-value{
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.02em;
+      position:relative;
+      z-index:1;
+      line-height:1.2;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .kpi-sub{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      position:relative;
+      z-index:1;
+    }
+
+    .section{margin-bottom:18px}
+
+    .dual-chart{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .chart-box{padding:18px;min-width:0}
+
+    .bar-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:12px;
+      min-width:0;
+    }
+
+    .bar-row{
+      display:grid;
+      grid-template-columns:minmax(140px,220px) minmax(0,1fr) minmax(140px,220px);
+      gap:12px;
+      align-items:center;
+      min-width:0;
+    }
+
+    .bar-label{
+      font-size:13px;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      min-width:0;
+    }
+
+    .bar-track{
+      position:relative;
+      height:18px;
+      background:#edf2f7;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #e2e8f0;
+      min-width:0;
+    }
+
+    .bar-fill{
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:0%;
+      border-radius:999px;
+      transition:width .5s ease;
+      max-width:100%;
+    }
+
+    .bar-target-line{
+      position:absolute;
+      top:0;
+      bottom:0;
+      width:2px;
+      background:#1f2937;
+      opacity:.65;
+      left:100%;
+      transform:translateX(-1px);
+    }
+
+    .bar-value{
+      text-align:right;
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      min-width:0;
+    }
+
+    .clients-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(520px,1fr));
+      gap:18px;
+      width:100%;
+      min-width:0;
+    }
+
+    .client-card{
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
+    }
+
+    .client-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      min-width:0;
+    }
+
+    .client-head{
+      min-width:0;
+      flex:1;
+    }
+
+    .client-name{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.2;
+      margin:0;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .client-sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .client-stats{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:10px;
+      min-width:0;
+    }
+
+    .stat{
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      min-width:0;
+      overflow:hidden;
+    }
+
+    .stat-label{
+      font-size:10px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+    }
+
+    .stat-value{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.2;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .progress-group{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      min-width:0;
+    }
+
+    .progress-card{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:12px;
+      min-width:0;
+      overflow:hidden;
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:8px;
+      min-width:0;
+    }
+
+    .progress-title{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .progress-value{
+      font-size:13px;
+      font-weight:800;
+      text-align:right;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+
+    .progress-track{
+      height:12px;
+      background:#edf2f7;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #e2e8f0;
+      margin-bottom:8px;
+      min-width:0;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      transition:width .5s ease;
+      max-width:100%;
+    }
+
+    .progress-foot{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:12px;
+      color:var(--muted);
+      min-width:0;
+    }
+
+    .progress-foot span{
+      min-width:0;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .reading{
+      padding:18px;
+      background:linear-gradient(135deg,#ffffff 0%,#f8fbff 100%);
+    }
+
+    .reading p{
+      margin:0 0 10px;
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      table-layout:fixed;
+    }
+
+    thead th{
+      position:sticky;
+      top:0;
+      background:#f8fafc;
+      z-index:1;
+      text-align:left;
+      padding:12px 10px;
+      border-bottom:1px solid var(--line);
+      color:#334155;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    tbody td{
+      padding:12px 10px;
+      border-bottom:1px solid var(--line);
+      vertical-align:middle;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    tbody tr:hover{background:#f8fbff}
+
+    .table-wrap{
+      max-height:520px;
+      overflow:auto;
+      border-top:1px solid var(--line);
+      width:100%;
+    }
+
+    .right{text-align:right}
+    .center{text-align:center}
+
+    .mobile-table-note{
+      display:none;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#9a3412;
+      border-radius:14px;
+      padding:14px;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .error-box{
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#be123c;
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:18px;
+      display:none;
+      white-space:pre-line;
+    }
+
+    .loading{
+      opacity:.65;
+      pointer-events:none;
+    }
+
+    .refresh-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid #cbd5e1;
+      background:#fff;
+      color:#0f172a;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+      margin-top:12px;
+    }
+
+    .refresh-btn:hover{
+      background:#f8fafc;
+      border-color:#94a3b8;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1380px){
+      .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero{grid-template-columns:1fr}
+      .header{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 1180px){
+      .clients-grid{grid-template-columns:1fr}
+      .dual-chart{grid-template-columns:1fr}
+      .client-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .progress-group{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 900px){
+      .hero-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .bar-row{grid-template-columns:1fr}
+      .bar-value{text-align:left}
+
+      .desktop-table{
+        display:none;
+      }
+
+      .mobile-table-note{
+        display:block;
+      }
+    }
+
+    @media (max-width: 640px){
+      body{padding:12px}
+      .meta{grid-template-columns:1fr}
+      .hero-row{grid-template-columns:1fr}
+      .kpi-grid{grid-template-columns:1fr}
+      .client-stats{grid-template-columns:1fr}
+      .hero-kpi{font-size:42px}
+      .clients-grid{grid-template-columns:1fr}
+      .client-card{padding:14px}
+      .card-pad{padding:16px}
+    }
+  </style>
 </head>
 <body>
 
-    <div id="loginScreen" class="login-container">
-        <div class="login-card">
-            <img src="logoviggo.png" alt="Viggo">
-            <h2>Acceso Vendedores</h2>
-            <p style="color:var(--muted); font-size:14px; margin-bottom:20px;">Ingresá tus credenciales para ver tu desempeño.</p>
-            <div id="loginError" style="color:red; font-weight:bold; margin-bottom:15px; display:none;"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Usuario</label>
-                    <input type="text" id="userInput" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="passInput" class="form-input" required>
-                </div>
-                <button type="submit" class="btn-login">Ingresar al Panel</button>
-            </form>
-        </div>
-    </div>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img class="login-logo" src="logoviggo.png" alt="Viggo">
+      <h1 class="login-title">Dashboard Vendedor</h1>
+      <p class="login-subtitle">Ingresá tus credenciales de acceso.</p>
 
-    <div id="appWrapper" class="hidden">
-        <a href="index.html" class="back-btn">← Volver al Hub Comercial</a>
-        <div class="header">
+      <div id="loginError" class="login-error">Usuario o contraseña incorrectos.</div>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="form-group">
+          <label class="form-label" for="authUsername">Usuario</label>
+          <input class="form-input" id="authUsername" type="text" placeholder="Ej: ana, mariano, matias, gabriel" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="authPassword">Contraseña</label>
+          <input class="form-input" id="authPassword" type="password" required />
+        </div>
+        <button type="submit" class="login-btn">Ingresar</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="appWrapper" class="hidden">
+    <div class="container" id="app">
+      <div class="error-box" id="errorBox"></div>
+
+      <section class="header">
+        <div class="card card-pad">
+          <h1 class="title-xl">Dashboard Comercial Diario del Vendedor</h1>
+          <div class="muted">Panel operativo individual para seguimiento diario de ventas, clientes y cobranzas.</div>
+
+          <div class="meta">
+            <div class="meta-item">
+              <div class="meta-label">Vendedor</div>
+              <div class="meta-value" id="sellerName">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Mes actual</div>
+              <div class="meta-value" id="currentMonth">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Última actualización</div>
+              <div class="meta-value" id="lastUpdate">-</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Fuente de datos</div>
+              <div class="meta-value" id="sourceInfo">Google Sheets público</div>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <a href="index.html" class="refresh-btn" style="color:var(--brand); text-decoration:none;">← Volver al Hub</a>
+            <button class="refresh-btn" onclick="loadDashboard()">Actualizar ahora</button>
+            <button class="refresh-btn" onclick="logout()" style="color: #be123c;">Cerrar sesión</button>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <h2 class="title-lg">Foco diario sugerido</h2>
+          <div id="focusToday" class="muted">Cargando prioridades comerciales...</div>
+        </div>
+      </section>
+
+      <section class="hero">
+        <div class="card card-pad hero-main">
+          <div class="title-md">Avance general de ventas del vendedor</div>
+          <div class="hero-kpi" id="mainSalesPct">0,0%</div>
+          <div id="mainSalesStatus" class="status-chip neutral">Sin datos</div>
+
+          <div class="hero-row">
+            <div class="mini">
+              <div class="mini-label">Ventas generales H/F</div>
+              <div class="mini-value" id="salesHF">$0</div>
+            </div>
+            <div class="mini">
+              <div class="mini-label">Objetivo general ventas</div>
+              <div class="mini-value" id="salesGoal">$0</div>
+            </div>
+            <div class="mini">
+              <div class="mini-label">Mes actual objetivo</div>
+              <div class="mini-value" id="salesGoalMonth">$0</div>
+            </div>
+            <div class="mini">
+              <div class="mini-label">Desvío vs objetivo</div>
+              <div class="mini-value" id="salesGap">$0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="title-md">Estado comercial general</div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:10px;">
             <div>
-                <h1 id="sellerTitle" style="margin:0">Cargando...</h1>
-                <span id="updateTime" style="color:var(--muted); font-size:12px;"></span>
+              <div class="small muted">Clientes activos</div>
+              <div style="font-size:34px; font-weight:900;" id="activeClients">0</div>
             </div>
-            <button onclick="logout()" style="padding:8px 15px; border-radius:8px; border:1px solid #ddd; cursor:pointer; font-weight:bold;">Cerrar Sesión</button>
+            <div>
+              <div class="small muted">Clientes con objetivo cumplido</div>
+              <div style="font-size:34px; font-weight:900;" id="goalClients">0</div>
+            </div>
+            <div>
+              <div class="small muted">Clientes en alerta</div>
+              <div style="font-size:34px; font-weight:900;" id="alertClients">0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <div class="card kpi-card">
+          <div class="kpi-label">Ventas generales H/F</div>
+          <div class="kpi-value" id="kpiSalesHF">$0</div>
+          <div class="kpi-sub">Suma de ventas reales de los clientes del vendedor.</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-label">Objetivo general de ventas</div>
+          <div class="kpi-value" id="kpiSalesGoal">$0</div>
+          <div class="kpi-sub">Objetivo total del mes actual.</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-label">% alcanzado ventas</div>
+          <div class="kpi-value" id="kpiSalesPct">0,0%</div>
+          <div class="kpi-sub">Avance sobre objetivo comercial.</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-label">Saldo actual clientes</div>
+          <div class="kpi-value" id="kpiCollectionsHF">$0</div>
+          <div class="kpi-sub">Cuánto debe hoy el total de clientes.</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-label">Pagos últimos 30 días</div>
+          <div class="kpi-value" id="kpiCollectionsGoal">$0</div>
+          <div class="kpi-sub">Pagos realizados recientemente por los clientes.</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-label">Clientes activos con compra</div>
+          <div class="kpi-value" id="kpiClientCount">0</div>
+          <div class="kpi-sub">Clientes con movimiento real en el mes.</div>
+        </div>
+      </section>
+
+      <section class="dual-chart">
+        <div class="card chart-box">
+          <div class="title-md">Comparativo por cliente · Ventas vs objetivo</div>
+          <div class="muted small">La barra representa la venta actual y la línea marca el 100% del objetivo mensual del cliente.</div>
+          <div class="bar-list" id="salesBarList"></div>
         </div>
 
-        <div class="grid">
-            <div class="card"><div class="stat-label">Ventas Mes Actual</div><div class="stat-value" id="statActual">$0</div></div>
-            <div class="card"><div class="stat-label">Objetivo del Mes</div><div class="stat-value" id="statGoal">$0</div></div>
-            <div class="card"><div class="stat-label">% de Cumplimiento</div><div class="stat-value" id="statPct">0%</div></div>
+        <div class="card chart-box">
+          <div class="title-md">Comparativo por cliente · Saldos y pagos recientes</div>
+          <div class="muted small">Vista informativa del saldo actual, de los pagos realizados y del monto vencido.</div>
+          <div class="bar-list" id="collectionsBarList"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card">
+          <div class="card-pad">
+            <div class="title-lg">Panel por cliente</div>
+            <div class="muted">Seguimiento comercial diario de cada cuenta del vendedor.</div>
+          </div>
+          <div class="card-pad">
+            <div class="clients-grid" id="clientsGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card reading">
+          <div class="title-lg">Lectura ejecutiva automática</div>
+          <div id="executiveReading"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card desktop-table">
+          <div class="card-pad">
+            <div class="title-lg">Tabla consolidada</div>
+            <div class="muted">Vista integral para revisión rápida y priorización comercial.</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th class="right">Compras H/F</th>
+                  <th class="right">Objetivo mes</th>
+                  <th class="right">% compra alcanzado</th>
+                  <th class="right">Desvío compra</th>
+                  <th class="right">Saldo actual</th>
+                  <th class="right">Pagos</th>
+                  <th>Observación cobranza</th>
+                </tr>
+              </thead>
+              <tbody id="consolidatedTable"></tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="card" style="padding:0;">
-            <h3 style="padding: 25px 25px 0 25px; margin: 0;">Detalle de Clientes</h3>
-            <div style="overflow-x:auto;">
-                <table id="clientsTable">
-                    <thead>
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Ventas H/F</th>
-                            <th>Objetivo</th>
-                            <th>% Cumplimiento</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="4" style="text-align:center; padding:30px;">Cargando datos detallados...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="mobile-table-note">
+          La tabla consolidada está disponible solo en PC para conservar una lectura correcta y evitar deformaciones en pantallas pequeñas.
         </div>
+      </section>
     </div>
+  </div>
 
-    <script>
-        const CONFIG = {
-            salesUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
-            sessionKey: "viggo_seller_logged_in",
-            hubKey: "viggo_hub_auth"
-        };
+  <script>
+    // --- LÓGICA DE AUTENTICACIÓN Y DIRECTORIO ---
+    
+    // Directorio de vendedores (Usuario en minúscula)
+    const SELLERS_DIRECTORY = {
+      "ana": { pass: "ventas2026", name: "Anabella Madina", firstName: "Anabella", aliases: ["Anabella Madina"] },
+      "mariano": { pass: "ventas2026", name: "Mariano Martinez Dan", firstName: "Mariano", aliases: ["Mariano Martinez Dan", "Mariano Martinez"] },
+      "matias": { pass: "ventas2026", name: "Matias Magone", firstName: "Matias", aliases: ["Matias Magone", "MATIAS MAGONE"] },
+      "gabriel": { pass: "ventas2026", name: "GABRIEL SIGALI", firstName: "Gabriel", aliases: ["GABRIEL SIGALI", "Gabriel Sigali"] }
+    };
 
-        // Extraer el nombre del vendedor de la URL (si viene del Hub)
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlSeller = urlParams.get('vendedor');
+    const sessionKey = "viggo_unified_seller_auth";
+    let activeSeller = null;
 
-        function checkSession() {
-            const isSeller = sessionStorage.getItem(CONFIG.sessionKey) === "true";
-            const isManager = sessionStorage.getItem(CONFIG.hubKey) === "true";
+    const loginScreen = document.getElementById("loginScreen");
+    const appWrapper = document.getElementById("appWrapper");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
 
-            if (isSeller || isManager) {
-                document.getElementById("loginScreen").classList.add("hidden");
-                document.getElementById("appWrapper").classList.remove("hidden");
-                loadDashboard();
-            }
+    function initApp() {
+      setText("sellerName", activeSeller.name);
+      setText("currentMonth", currentMonthLabel());
+      setText("lastUpdate", nowLabel());
+      loadDashboard();
+      setInterval(loadDashboard, CONFIG.refreshMs);
+    }
+
+    // --- NUEVO PUENTE PARA GERENCIA ---
+    function getSellerFromUrl(vendedorName) {
+      if (!vendedorName) return null;
+      const normalizedTarget = vendedorName.trim().toUpperCase();
+      for (const key in SELLERS_DIRECTORY) {
+        const seller = SELLERS_DIRECTORY[key];
+        const aliasesUpper = seller.aliases.map(a => a.trim().toUpperCase());
+        if (aliasesUpper.includes(normalizedTarget)) {
+          return seller;
         }
+      }
+      return null;
+    }
 
-        document.getElementById("loginForm").onsubmit = async (e) => {
-            e.preventDefault();
-            const username = document.getElementById("userInput").value.trim();
-            const password = document.getElementById("passInput").value.trim();
-            const errorDiv = document.getElementById("loginError");
+    function checkSession() {
+      const stored = sessionStorage.getItem(sessionKey);
+      const isManager = sessionStorage.getItem("viggo_hub_auth") === "true";
 
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ username, password })
-                });
-                const result = await res.json();
+      // 1. Verificar si viene desde el Hub (Gerencia) con un vendedor en la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSellerName = urlParams.get('vendedor');
 
-                if (result.success && result.user.role === 'seller') {
-                    sessionStorage.setItem(CONFIG.sessionKey, "true");
-                    sessionStorage.setItem("viggo_seller_name", result.user.name.toUpperCase());
-                    location.reload();
-                } else {
-                    errorDiv.textContent = "Credenciales incorrectas o acceso denegado.";
-                    errorDiv.style.display = "block";
-                }
-            } catch (err) { alert("Error de conexión."); }
-        };
-
-        function logout() {
-            sessionStorage.removeItem(CONFIG.sessionKey);
-            // Si es gerente, lo mandamos al hub en lugar de desloguearlo del todo
-            if(sessionStorage.getItem(CONFIG.hubKey) === "true") {
-                window.location.href = "index.html";
-            } else {
-                location.reload();
-            }
+      if (isManager && urlSellerName) {
+        const foundSeller = getSellerFromUrl(urlSellerName);
+        if (foundSeller) {
+          activeSeller = foundSeller;
+          loginScreen.classList.add("hidden");
+          appWrapper.classList.remove("hidden");
+          initApp();
+          return;
         }
+      }
 
-        async function loadDashboard() {
-            // LÓGICA CLAVE: Si hay nombre en URL usa ese, si no, usa el de la sesión.
-            const sellerName = urlSeller ? urlSeller.toUpperCase() : (sessionStorage.getItem("viggo_seller_name") || "GERENCIA");
-            
-            document.getElementById("sellerTitle").textContent = "Panel: " + sellerName;
-            document.getElementById("updateTime").textContent = "Actualizado: " + new Date().toLocaleTimeString();
+      // 2. Verificar si es un vendedor logueado normalmente
+      if (stored) {
+        activeSeller = JSON.parse(stored);
+        loginScreen.classList.add("hidden");
+        appWrapper.classList.remove("hidden");
+        initApp();
+      }
+    }
 
-            try {
-                const res = await fetch(CONFIG.salesUrl);
-                const text = await res.text();
-                const rows = parseCSV(text);
-                renderSellerStats(rows, sellerName);
-            } catch (err) { console.error("Error al leer Sheets", err); }
+    function logout() {
+      sessionStorage.removeItem(sessionKey);
+      // Si está usando la llave de gerencia, devolverlo al Hub
+      if (sessionStorage.getItem("viggo_hub_auth") === "true") {
+        window.location.href = "index.html";
+      } else {
+        location.reload();
+      }
+    }
+
+    loginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const user = document.getElementById("authUsername").value.trim().toLowerCase();
+      const pass = document.getElementById("authPassword").value.trim();
+
+      if (SELLERS_DIRECTORY[user] && SELLERS_DIRECTORY[user].pass === pass) {
+        loginError.style.display = "none";
+        activeSeller = SELLERS_DIRECTORY[user];
+        sessionStorage.setItem(sessionKey, JSON.stringify(activeSeller));
+        
+        loginScreen.classList.add("hidden");
+        appWrapper.classList.remove("hidden");
+        initApp();
+      } else {
+        loginError.style.display = "block";
+      }
+    });
+
+    // --- CONFIGURACIÓN BASE DEL DASHBOARD ---
+    const CONFIG = {
+      refreshMs: 7200000,
+      urls: {
+        salesSummary: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
+        salesClients: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
+        updateInfo: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960"
+      },
+      balancesUrl: "https://docs.google.com/spreadsheets/d/18PCo4IxvQdmMjRcetcOSTgSXlNf2H5S_/gviz/tq?tqx=out:csv&sheet=comparativo_clientes",
+      thresholds: { ok: 90, follow: 70 },
+      summaryColumns: { seller: "VENDEDOR", goal: "OBJETIVO", actual: "FACT HASTA LA FECHA", pct: "% ALCANZADO", gap: "DIF EN $" },
+      clientColumns: { client: "Cliente", seller: "Vend. Cliente", actual: "MES ACTUAL", goal: "OBJ MES", gap: "DIF EN $", pct: "ALCANCE %" },
+      balanceColumns: { client: "Cliente", seller: "Vendedor", balance: "Saldo Actual", payments: "Pagos Últimos 30 Días", overdue: "Monto Vencido" }
+    };
+
+    // --- FUNCIONES AUXILIARES ---
+    function parseCSV(text){
+      const rows = [];
+      let row = [], cell = "", inQuotes = false;
+      for(let i = 0; i < text.length; i++){
+        const ch = text[i], next = text[i + 1];
+        if(ch === '"'){
+          if(inQuotes && next === '"'){ cell += '"'; i++; } else { inQuotes = !inQuotes; }
+        } else if(ch === ',' && !inQuotes){
+          row.push(cell); cell = "";
+        } else if((ch === '\n' || ch === '\r') && !inQuotes){
+          if(ch === '\r' && next === '\n') i++;
+          row.push(cell); rows.push(row); row = []; cell = "";
+        } else { cell += ch; }
+      }
+      if(cell.length > 0 || row.length > 0){ row.push(cell); rows.push(row); }
+      return rows;
+    }
+
+    function toNumber(value){
+      if(value == null) return 0;
+      let s = String(value).trim();
+      if(!s) return 0;
+      s = s.replace(/\s/g, "").replace(/\$/g, "").replace(/USD/gi, "").replace(/ARS/gi, "").replace(/%/g, "").replace(/\./g, "").replace(/,/g, ".").replace(/[^\d.-]/g, "");
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function formatCurrency(value){
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 2 }).format(Number(value || 0));
+    }
+
+    function formatSignedCurrency(value){
+      const n = Number(value || 0);
+      const absFormatted = formatCurrency(Math.abs(n));
+      return n < 0 ? "-" + absFormatted : absFormatted;
+    }
+
+    function formatPercent(value){
+      return new Intl.NumberFormat("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0)) + "%";
+    }
+
+    function valueClassBySign(value){
+      const n = Number(value || 0);
+      if(n < 0) return "value-negative";
+      if(n > 0) return "value-positive";
+      return "value-neutral";
+    }
+
+    function normalizeText(value){
+      return String(value || "").trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+    }
+
+    function setText(id, value){
+      const el = document.getElementById(id);
+      if(el) el.textContent = value;
+    }
+
+    function setWidth(el, value){ if(el) el.style.width = value; }
+
+    function truncate(text, max=34){
+      const s = String(text || "");
+      return s.length > max ? s.slice(0, max - 1) + "…" : s;
+    }
+
+    function nowLabel(){ return new Date().toLocaleString("es-AR"); }
+    function currentMonthLabel(){ return new Date().toLocaleDateString("es-AR", { month: "long", year: "numeric" }); }
+
+    function getStatusClass(pct){
+      if(pct >= CONFIG.thresholds.ok) return "ok";
+      if(pct >= CONFIG.thresholds.follow) return "follow";
+      return "alert";
+    }
+
+    function getStatusText(pct){
+      if(pct >= CONFIG.thresholds.ok) return "OK";
+      if(pct >= CONFIG.thresholds.follow) return "Seguimiento";
+      return "Alerta";
+    }
+
+    function progressColor(pct){
+      if(pct >= CONFIG.thresholds.ok) return "linear-gradient(90deg,#16a34a,#22c55e)";
+      if(pct >= CONFIG.thresholds.follow) return "linear-gradient(90deg,#d97706,#f59e0b)";
+      return "linear-gradient(90deg,#dc2626,#ef4444)";
+    }
+
+    function clampPercent(n){ return Math.max(0, Math.min(n, 100)); }
+    function safeRatio(actual, goal){ return goal <= 0 ? 0 : (actual / goal) * 100; }
+    function sum(arr){ return arr.reduce((acc,v) => acc + Number(v || 0), 0); }
+    function showError(msg){ const el = document.getElementById("errorBox"); el.style.display = "block"; el.textContent = msg; }
+    function hideError(){ const el = document.getElementById("errorBox"); el.style.display = "none"; el.textContent = ""; }
+    function escapeHtml(str){ return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+    async function fetchSheetUpdateValue(){
+      try{
+        const rows = await fetchCSV(CONFIG.urls.updateInfo);
+        if(!rows || rows.length < 2) return "-";
+        const value = (rows[1] || [])[9];
+        return (value && String(value).trim()) ? String(value).trim() : "-";
+      } catch(err){ return "-"; }
+    }
+
+    async function fetchCSV(url){
+      const finalUrl = url + (url.includes("?") ? "&" : "?") + "_ts=" + Date.now();
+      const res = await fetch(finalUrl, { method: "GET", cache: "no-store" });
+      if(!res.ok) throw new Error("Google Sheets respondió con estado HTTP " + res.status);
+      const text = await res.text();
+      if(!text || !text.trim()) throw new Error("La respuesta CSV llegó vacía.");
+      return parseCSV(text);
+    }
+
+    function extractTableByHeaders(rows, requiredHeaders){
+      let bestRow = -1, bestScore = -1;
+      for(let r = 0; r < Math.min(rows.length, 60); r++){
+        const row = rows[r] || [];
+        const normalized = row.map(v => String(v || "").trim().toLowerCase());
+        let score = 0;
+        for(const h of requiredHeaders){ if(normalized.includes(String(h).trim().toLowerCase())) score++; }
+        if(score > bestScore){ bestScore = score; bestRow = r; }
+      }
+      if(bestRow < 0 || bestScore <= 0) return { records: [] };
+      const header = rows[bestRow] || [], records = [];
+      for(let r = bestRow + 1; r < rows.length; r++){
+        const row = rows[r] || [];
+        if(row.every(v => String(v || "").trim() === "")) continue;
+        const obj = {};
+        for(let c = 0; c < header.length; c++){
+          const key = String(header[c] || "").trim();
+          if(key) obj[key] = String(row[c] || "").trim();
         }
+        records.push(obj);
+      }
+      return { records };
+    }
 
-        function parseCSV(text) {
-            return text.split('\n').map(row => {
-                let cells = []; let cur = ''; let inQ = false;
-                for (let i=0; i<row.length; i++) {
-                    if (row[i]==='"') inQ = !inQ;
-                    else if (row[i]===',' && !inQ) { cells.push(cur.trim()); cur=''; }
-                    else cur += row[i];
-                }
-                cells.push(cur.trim()); return cells;
-            });
-        }
+    function buildClientSales(rows){
+      const headers = [CONFIG.clientColumns.client, CONFIG.clientColumns.seller, CONFIG.clientColumns.actual, CONFIG.clientColumns.goal, CONFIG.clientColumns.gap, CONFIG.clientColumns.pct];
+      const table = extractTableByHeaders(rows, headers);
+      const sellerSet = new Set(activeSeller.aliases.map(normalizeText));
 
-        function cleanNum(val) {
-            if (!val) return 0;
-            return parseFloat(val.replace(/[$.]/g, '').replace(',', '.')) || 0;
-        }
+      return table.records
+        .filter(r => sellerSet.has(normalizeText(r[CONFIG.clientColumns.seller])))
+        .map(r => {
+          const actual = toNumber(r[CONFIG.clientColumns.actual]), goal = toNumber(r[CONFIG.clientColumns.goal]);
+          const pctCalc = safeRatio(actual, goal), gapCalc = actual - goal;
+          return {
+            client: String(r[CONFIG.clientColumns.client] || "Cliente sin nombre").trim(),
+            actual, goal, pct: pctCalc, gap: gapCalc,
+            status: getStatusText(pctCalc), statusClass: getStatusClass(pctCalc)
+          };
+        })
+        .filter(x => x.client && (x.actual !== 0 || x.goal !== 0))
+        .sort((a,b) => {
+          const priority = { "Alerta": 0, "Seguimiento": 1, "OK": 2 };
+          return (priority[a.status] ?? 99) - (priority[b.status] ?? 99) || a.pct - b.pct;
+        });
+    }
 
-        function formatARS(val) {
-            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(val);
-        }
+    function buildBalances(rows){
+      const headers = [CONFIG.balanceColumns.client, CONFIG.balanceColumns.seller, CONFIG.balanceColumns.balance, CONFIG.balanceColumns.payments, CONFIG.balanceColumns.overdue];
+      const table = extractTableByHeaders(rows, headers);
+      const sellerSet = new Set(activeSeller.aliases.map(normalizeText));
 
-        function renderSellerStats(rows, targetName) {
-            // Resumen General
-            const summaryRow = rows.find(r => r[0] && r[0].toUpperCase() === targetName);
-            
-            if (summaryRow) {
-                const actual = cleanNum(summaryRow[2]);
-                const goal = cleanNum(summaryRow[1]);
-                const pct = goal > 0 ? (actual/goal)*100 : 0;
+      return table.records
+        .filter(r => sellerSet.has(normalizeText(r[CONFIG.balanceColumns.seller])))
+        .map(r => ({
+          client: String(r[CONFIG.balanceColumns.client] || "").trim(),
+          clientKey: normalizeText(r[CONFIG.balanceColumns.client]),
+          balance: toNumber(r[CONFIG.balanceColumns.balance]),
+          payments: toNumber(r[CONFIG.balanceColumns.payments]),
+          overdue: toNumber(r[CONFIG.balanceColumns.overdue])
+        }))
+        .filter(x => x.client);
+    }
 
-                document.getElementById("statActual").textContent = formatARS(actual);
-                document.getElementById("statGoal").textContent = formatARS(goal);
-                document.getElementById("statPct").textContent = pct.toFixed(1) + "%";
-            }
+    function mergeSalesWithBalances(salesClients, balances){
+      const map = {};
+      balances.forEach(b => map[b.clientKey] = b);
+      return salesClients.map(client => {
+        const match = map[normalizeText(client.client)];
+        return { ...client, balance: match?.balance || 0, payments: match?.payments || 0, overdue: match?.overdue || 0 };
+      });
+    }
 
-            // Tabla Detallada
-            const tableBody = document.querySelector("#clientsTable tbody");
-            tableBody.innerHTML = "";
-            
-            const clientRows = rows.filter(r => r[1] && r[1].toUpperCase() === targetName);
-            
-            if (clientRows.length === 0) {
-                tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:30px;'>No se encontraron clientes asignados.</td></tr>";
-            } else {
-                clientRows.forEach(r => {
-                    const cActual = cleanNum(r[2]);
-                    const cGoal = cleanNum(r[3]);
-                    const cPct = cGoal > 0 ? (cActual/cGoal)*100 : 0;
+    function buildSummaryData(rows, salesClients){
+      const headers = [CONFIG.summaryColumns.seller, CONFIG.summaryColumns.goal, CONFIG.summaryColumns.actual, CONFIG.summaryColumns.pct, CONFIG.summaryColumns.gap];
+      const table = extractTableByHeaders(rows, headers);
+      const sellerSet = new Set(activeSeller.aliases.map(normalizeText));
+      
+      const match = table.records.find(r => sellerSet.has(normalizeText(r[CONFIG.summaryColumns.seller])));
+      const goalFromSummary = match ? toNumber(match[CONFIG.summaryColumns.goal]) : 0;
+      const actualFromClients = sum((salesClients || []).map(x => x.actual));
+      const gapCalculated = actualFromClients - goalFromSummary;
 
-                    let statusClass = "status-alert";
-                    if(cPct >= 90) statusClass = "status-ok";
-                    else if(cPct >= 70) statusClass = "status-warn";
+      return { seller: activeSeller.name, goal: goalFromSummary, actual: actualFromClients, pct: safeRatio(actualFromClients, goalFromSummary), gap: gapCalculated };
+    }
 
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td><strong>${r[0]}</strong></td>
-                            <td>${formatARS(cActual)}</td>
-                            <td>${formatARS(cGoal)}</td>
-                            <td class="${statusClass}">${cPct.toFixed(1)}%</td>
-                        </tr>
-                    `;
-                });
-            }
-        }
+    function renderSummary(summary, salesClients, updateLabel){
+      const salesPct = safeRatio(summary.actual, summary.goal);
+      const totalBalance = sum(salesClients.map(x => x.balance));
+      const totalPayments = sum(salesClients.map(x => x.payments));
 
-        checkSession();
-    </script>
+      setText("sellerName", summary.seller);
+      setText("lastUpdate", updateLabel || "-");
+      setText("mainSalesPct", formatPercent(salesPct));
+      const statusEl = document.getElementById("mainSalesStatus");
+      statusEl.className = "status-chip " + getStatusClass(salesPct);
+      statusEl.textContent = getStatusText(salesPct);
+
+      setText("salesHF", formatCurrency(summary.actual));
+      setText("salesGoal", formatCurrency(summary.goal));
+      setText("salesGoalMonth", formatCurrency(summary.goal));
+
+      const salesGapEl = document.getElementById("salesGap");
+      salesGapEl.textContent = formatSignedCurrency(summary.gap);
+      salesGapEl.className = "mini-value " + valueClassBySign(summary.gap);
+
+      setText("kpiSalesHF", formatCurrency(summary.actual));
+      setText("kpiSalesGoal", formatCurrency(summary.goal));
+      setText("kpiSalesPct", formatPercent(salesPct));
+      setText("kpiCollectionsHF", formatCurrency(totalBalance));
+      setText("kpiCollectionsGoal", formatCurrency(totalPayments));
+      setText("kpiClientCount", String(salesClients.filter(x => x.actual > 0).length));
+      setText("activeClients", String(salesClients.filter(x => x.actual > 0).length));
+      setText("goalClients", String(salesClients.filter(x => x.pct >= CONFIG.thresholds.ok).length));
+      setText("alertClients", String(salesClients.filter(x => x.pct < CONFIG.thresholds.follow).length));
+    }
+
+    function renderSalesBars(clients){
+      const wrap = document.getElementById("salesBarList"); wrap.innerHTML = "";
+      [...clients].sort((a,b) => b.actual - a.actual).slice(0,12).forEach(item => {
+        wrap.insertAdjacentHTML("beforeend", `
+          <div class="bar-row">
+            <div class="bar-label" title="${escapeHtml(item.client)}">${escapeHtml(truncate(item.client, 28))}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.min(Math.max(item.pct, 0), 100).toFixed(2)}%; background:${progressColor(item.pct)}"></div>
+              <div class="bar-target-line"></div>
+            </div>
+            <div class="bar-value">${formatCurrency(item.actual)} / ${formatCurrency(item.goal)}</div>
+          </div>
+        `);
+      });
+    }
+
+    function renderCollectionBars(clients){
+      const wrap = document.getElementById("collectionsBarList"); wrap.innerHTML = "";
+      [...clients].sort((a,b) => b.balance - a.balance).slice(0,12).forEach(item => {
+        wrap.insertAdjacentHTML("beforeend", `
+          <div class="bar-row">
+            <div class="bar-label" title="${escapeHtml(item.client)}">${escapeHtml(truncate(item.client, 28))}</div>
+            <div style="font-size:12px; font-weight:700; color:#64748b;">Saldo: ${formatCurrency(item.balance)} | Pagos: ${formatCurrency(item.payments)}</div>
+            <div class="bar-value">${formatCurrency(item.overdue)}</div>
+          </div>
+        `);
+      });
+    }
+
+    function renderClients(salesClients){
+      const wrap = document.getElementById("clientsGrid"); wrap.innerHTML = "";
+      salesClients.forEach(item => {
+        wrap.insertAdjacentHTML("beforeend", `
+          <div class="card client-card">
+            <div class="client-top">
+              <div class="client-head"><h3 class="client-name">${escapeHtml(item.client)}</h3><div class="client-sub">Seguimiento individual del mes actual</div></div>
+              <div class="status-chip ${item.statusClass}">${item.status}</div>
+            </div>
+            <div class="client-stats">
+              <div class="stat"><div class="stat-label">Compra H/F</div><div class="stat-value">${formatCurrency(item.actual)}</div></div>
+              <div class="stat"><div class="stat-label">Objetivo mes</div><div class="stat-value">${formatCurrency(item.goal)}</div></div>
+              <div class="stat"><div class="stat-label">% compra</div><div class="stat-value">${formatPercent(item.pct)}</div></div>
+              <div class="stat"><div class="stat-label">Desvío compra</div><div class="stat-value ${valueClassBySign(item.gap)}">${formatSignedCurrency(item.gap)}</div></div>
+              <div class="stat"><div class="stat-label">Saldo actual</div><div class="stat-value">${formatCurrency(item.balance)}</div></div>
+              <div class="stat"><div class="stat-label">Pagos</div><div class="stat-value">${formatCurrency(item.payments)}</div></div>
+            </div>
+            <div class="progress-group">
+              <div class="progress-card">
+                <div class="progress-head"><div class="progress-title">Avance compra</div><div class="progress-value">${formatPercent(item.pct)}</div></div>
+                <div class="progress-track"><div class="progress-fill" style="width:${clampPercent(item.pct)}%; background:${progressColor(item.pct)};"></div></div>
+                <div class="progress-foot"><span>${formatCurrency(item.actual)}</span><span>${formatCurrency(item.goal)}</span></div>
+              </div>
+              <div class="progress-card">
+                <div class="progress-head"><div class="progress-title">Situación de cobranza</div><div class="progress-value">Informativo</div></div>
+                <div class="progress-foot" style="flex-direction:column; gap:8px;">
+                  <span><strong>Saldo actual:</strong> ${formatCurrency(item.balance)}</span>
+                  <span><strong>Pagos:</strong> ${formatCurrency(item.payments)}</span>
+                  <span><strong>Monto vencido:</strong> ${formatCurrency(item.overdue)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    function renderTable(salesClients){
+      const tbody = document.getElementById("consolidatedTable"); tbody.innerHTML = "";
+      salesClients.forEach(item => {
+        let obs = "Sin movimiento";
+        if (item.balance > 0 && item.payments > 0) obs = "Con pagos recientes";
+        if (item.balance > 0 && item.payments === 0) obs = "Sin pagos recientes";
+        if (item.balance <= 0) obs = "Sin saldo relevante";
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr>
+            <td>${escapeHtml(item.client)}</td>
+            <td class="right">${formatCurrency(item.actual)}</td>
+            <td class="right">${formatCurrency(item.goal)}</td>
+            <td class="right">${formatPercent(item.pct)}</td>
+            <td class="right ${valueClassBySign(item.gap)}">${formatSignedCurrency(item.gap)}</td>
+            <td class="right">${formatCurrency(item.balance)}</td>
+            <td class="right">${formatCurrency(item.payments)}</td>
+            <td>${obs}</td>
+          </tr>
+        `);
+      });
+    }
+
+    function renderFocus(summary, salesClients){
+      const topSales = [...salesClients].sort((a,b) => b.pct - a.pct).slice(0,3);
+      const worstSales = [...salesClients].sort((a,b) => a.pct - b.pct).slice(0,3);
+      const highBalance = [...salesClients].filter(x => x.balance > 0).sort((a,b) => b.balance - a.balance).slice(0,3);
+
+      document.getElementById("focusToday").innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div><strong>Avance general:</strong> ${formatPercent(safeRatio(summary.actual, summary.goal))} sobre objetivo mensual.</div>
+          <div><strong>Mejor posicionados:</strong> ${topSales.map(x => escapeHtml(x.client)).join(", ") || "Sin datos"}.</div>
+          <div><strong>Más atrasados:</strong> ${worstSales.map(x => escapeHtml(x.client)).join(", ") || "Sin datos"}.</div>
+          <div><strong>Prioridad de cobranza:</strong> enfocar gestión sobre ${highBalance.map(x => escapeHtml(x.client)).join(", ") || "Sin datos"}, que presentan el mayor saldo actual.</div>
+        </div>
+      `;
+    }
+
+    function renderReading(summary, salesClients){
+      const salesPct = safeRatio(summary.actual, summary.goal);
+      const totalBalance = sum(salesClients.map(x => x.balance)), totalPayments = sum(salesClients.map(x => x.payments));
+      const topSales = [...salesClients].sort((a,b) => b.pct - a.pct).slice(0,5);
+      const alerts = salesClients.filter(x => x.pct < CONFIG.thresholds.follow).slice(0,6);
+      const follow = salesClients.filter(x => x.pct >= CONFIG.thresholds.follow && x.pct < CONFIG.thresholds.ok).slice(0,6);
+      const balanceTop = [...salesClients].filter(x => x.balance > 0).sort((a,b) => b.balance - a.balance).slice(0,5);
+
+      let generalText = salesPct >= CONFIG.thresholds.ok ? "El vendedor se encuentra en zona de cumplimiento sólido respecto del objetivo general del mes. La prioridad pasa por consolidar cuentas activas y sostener el ritmo comercial." :
+                        salesPct >= CONFIG.thresholds.follow ? "El vendedor se encuentra en una zona intermedia de seguimiento. El avance es razonable, pero todavía requiere gestión activa sobre cuentas con potencial de cierre." :
+                        "El vendedor se encuentra en una zona de alerta respecto del objetivo general del mes. La gestión diaria debe concentrarse en cuentas con mayor brecha y capacidad de reacción en el corto plazo.";
+
+      document.getElementById("executiveReading").innerHTML = `
+        <p><strong>Lectura general:</strong> ${escapeHtml(activeSeller.firstName)} registra un avance de <strong>${formatPercent(salesPct)}</strong> sobre su objetivo de ventas del mes actual, con una facturación acumulada de <strong>${formatCurrency(summary.actual)}</strong> frente a un objetivo de <strong>${formatCurrency(summary.goal)}</strong>. ${generalText}</p>
+        <p><strong>Situación de saldos:</strong> el vendedor acumula un <strong>saldo actual</strong> de <strong>${formatCurrency(totalBalance)}</strong> y registra <strong>pagos de los últimos 30 días</strong> por <strong>${formatCurrency(totalPayments)}</strong>. Esto permite ver cuánto debe el cliente hoy, cuánto pagó recientemente y qué monto vencido sigue pendiente.</p>
+        <p><strong>Clientes mejor posicionados:</strong> ${topSales.length ? topSales.map(x => `<strong>${escapeHtml(x.client)}</strong> (${formatPercent(x.pct)})`).join(", ") : "Sin datos suficientes"}.</p>
+        <p><strong>Clientes en seguimiento:</strong> ${follow.length ? follow.map(x => `${escapeHtml(x.client)} (${formatPercent(x.pct)})`).join(", ") : "No se detectan clientes en esa franja"}.</p>
+        <p><strong>Clientes en alerta:</strong> ${alerts.length ? alerts.map(x => `${escapeHtml(x.client)} (${formatPercent(x.pct)})`).join(", ") : "No se detectan clientes en alerta"}.</p>
+        <p><strong>Principales prioridades de cobranza:</strong> ${balanceTop.length ? balanceTop.map(x => `${escapeHtml(x.client)} (${formatCurrency(x.balance)})`).join(", ") : "Sin saldos relevantes"}.</p>
+        <p><strong>Acción sugerida hoy:</strong> priorizar primero los clientes con mayor saldo actual, revisar luego qué cuentas tuvieron pagos recientes y cuáles no mostraron movimiento, y sostener en paralelo la gestión comercial sobre los clientes con mayor potencial de cierre.</p>
+      `;
+    }
+
+    async function loadDashboard(){
+      if (!activeSeller) return;
+      const app = document.getElementById("app");
+      app.classList.add("loading");
+      hideError();
+
+      try{
+        const [salesSummaryRows, salesClientsRows, balancesRows, updateLabel] = await Promise.all([
+          fetchCSV(CONFIG.urls.salesSummary),
+          fetchCSV(CONFIG.urls.salesClients),
+          fetchCSV(CONFIG.balancesUrl),
+          fetchSheetUpdateValue()
+        ]);
+
+        const salesClients = buildClientSales(salesClientsRows);
+        const balances = buildBalances(balancesRows);
+        const salesClientsMerged = mergeSalesWithBalances(salesClients, balances);
+        const summary = buildSummaryData(salesSummaryRows, salesClientsMerged);
+
+        renderSummary(summary, salesClientsMerged, updateLabel);
+        renderSalesBars(salesClientsMerged);
+        renderCollectionBars(salesClientsMerged);
+        renderClients(salesClientsMerged);
+        renderTable(salesClientsMerged);
+        renderFocus(summary, salesClientsMerged);
+        renderReading(summary, salesClientsMerged);
+      } catch(err){
+        console.error(err);
+        showError("Error al cargar el dashboard: " + err.message);
+      } finally {
+        app.classList.remove("loading");
+      }
+    }
+
+    // Iniciar
+    checkSession();
+  </script>
 </body>
 </html>
