@@ -6,260 +6,1072 @@
   <title>Hub Comercial Viggo</title>
   <style>
     :root{
-      --bg:#f4f7fb; --panel:#ffffff; --panel-soft:#f8fbff; --text:#16202c; --muted:#6b7787;
-      --line:#e5ebf3; --shadow:0 10px 28px rgba(15,23,42,.08); --radius:22px;
-      --ok:#16a34a; --ok-soft:#dcfce7; --follow:#d97706; --follow-soft:#fef3c7;
-      --alert:#dc2626; --alert-soft:#fee2e2; --neutral:#64748b; --neutral-soft:#e2e8f0;
-      --primary:#2563eb; --primary-dark:#1d4ed8; --brand:#0f5132;
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --panel-soft:#f8fbff;
+      --text:#16202c;
+      --muted:#6b7787;
+      --line:#e5ebf3;
+      --shadow:0 10px 28px rgba(15,23,42,.08);
+      --radius:22px;
+
+      --ok:#16a34a;
+      --ok-soft:#dcfce7;
+
+      --follow:#d97706;
+      --follow-soft:#fef3c7;
+
+      --alert:#dc2626;
+      --alert-soft:#fee2e2;
+
+      --neutral:#64748b;
+      --neutral-soft:#e2e8f0;
+
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
     }
+
     *{box-sizing:border-box}
-    html,body{ margin:0; padding:0; background:var(--bg); font-family:Inter, Segoe UI, sans-serif; color:var(--text); }
-    body{ padding:24px; min-height:100vh; background: radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 22%), linear-gradient(180deg, #f8fafc 0%, #eef4fa 100%); }
-    .container{ width:100%; max-width:1500px; margin:0 auto; }
-    .hidden{ display:none !important; }
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+    }
 
-    /* LOGIN */
-    .login-screen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
-    .login-card{ width:100%; max-width:430px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:28px; box-shadow:0 20px 60px rgba(15,23,42,.12); padding:28px; backdrop-filter:blur(12px); }
-    .login-logo{ max-width:180px; width:100%; margin-bottom:18px; display:block; margin-left:auto; margin-right:auto; }
-    .login-title{ margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em; text-align:center;}
-    .login-subtitle{ margin:0 0 24px; color:var(--muted); font-size:14px; text-align:center;}
-    .form-group{ margin-bottom:14px; }
-    .form-label{ display:block; font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
-    .form-input{ width:100%; height:50px; border:1px solid var(--line); border-radius:14px; padding:0 14px; font-size:15px; outline:none; }
-    .btn-login{ width:100%; background:var(--primary); color:#fff; border:none; border-radius:14px; padding:14px; font-weight:800; cursor:pointer; font-size:15px; transition: 0.2s; }
-    .btn-login:hover{ background: var(--primary-dark); }
-    .login-error{ display:none; margin:0 0 14px; padding:12px; border-radius:12px; background:#fef2f2; color:#b91c1c; font-weight:700; border:1px solid #fecaca; text-align:center;}
+    body{
+      padding:24px;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 22%),
+        radial-gradient(circle at top right, rgba(217,119,6,.05), transparent 20%),
+        linear-gradient(180deg, #f8fafc 0%, #eef4fa 100%);
+      min-height:100vh;
+    }
 
-    /* DASHBOARD */
-    .card{ background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; backdrop-filter:blur(10px); }
-    .header-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
-    .title-xl{ font-size:38px; font-weight:900; letter-spacing:-.03em; margin:0; }
-    .meta{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-top:16px; }
-    .meta-item{ background:var(--panel-soft); border:1px solid var(--line); border-radius:16px; padding:14px; }
-    .meta-label{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; }
-    .meta-value{ font-size:16px; font-weight:800; }
-    
-    .summary-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
-    .summary-card{ padding:18px; position:relative; overflow:hidden; }
-    .summary-value{ font-size:30px; font-weight:900; line-height:1.1; margin-top:8px; }
-    
-    .grid-5{ display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:18px; }
-    .seller-card{ display:flex; flex-direction:column; gap:16px; }
-    .status-chip{ padding:6px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; }
-    .ok{background:var(--ok-soft);color:var(--ok)} .follow{background:var(--follow-soft);color:var(--follow)} .alert{background:var(--alert-soft);color:var(--alert)}
-    
-    .progress-track{ height:12px; background:#edf2f7; border-radius:999px; overflow:hidden; margin-top:8px; border: 1px solid var(--line); }
-    .progress-fill{ height:100%; transition:width .8s ease; }
-    .btn-enter{ background:var(--primary); color:white; text-decoration:none; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:14px; margin-top:auto; transition: 0.2s; }
-    .btn-enter:hover{ transform: translateY(-2px); filter: brightness(1.1); }
+    .container{
+      width:100%;
+      max-width:1500px;
+      margin:0 auto;
+    }
 
-    @media (max-width: 900px){ .summary-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px){ .summary-grid, .grid-5{ grid-template-columns: 1fr; } .title-xl{ font-size: 28px; } }
+    .card{
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      min-width:0;
+      width:100%;
+      max-width:100%;
+      backdrop-filter:blur(10px);
+    }
+
+    .card-pad{padding:22px}
+
+    .header{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+      margin-bottom:22px;
+    }
+
+    .header-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .title-xl{
+      margin:0 0 8px;
+      font-size:38px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .muted{color:var(--muted)}
+
+    .meta{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .meta-item{
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      min-width:0;
+    }
+
+    .meta-label{
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:6px;
+    }
+
+    .meta-value{
+      font-size:16px;
+      font-weight:800;
+      overflow-wrap:anywhere;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-bottom:22px;
+    }
+
+    .summary-card{
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .summary-card::after{
+      content:"";
+      position:absolute;
+      right:-18px;
+      top:-18px;
+      width:72px;
+      height:72px;
+      border-radius:50%;
+      background:rgba(37,99,235,.06);
+    }
+
+    .summary-label{
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:8px;
+      position:relative;
+      z-index:1;
+    }
+
+    .summary-value{
+      font-size:30px;
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-.02em;
+      position:relative;
+      z-index:1;
+      overflow-wrap:anywhere;
+    }
+
+    .summary-sub{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      position:relative;
+      z-index:1;
+    }
+
+    .grid-5{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:18px;
+    }
+
+    .seller-card{
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+      overflow:hidden;
+    }
+
+    .seller-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .seller-name{
+      margin:0;
+      font-size:22px;
+      line-height:1.15;
+      font-weight:900;
+      letter-spacing:-.02em;
+      overflow-wrap:anywhere;
+    }
+
+    .seller-role{
+      margin-top:4px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .status-chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      border:1px solid transparent;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+
+    .ok{background:var(--ok-soft);color:var(--ok);border-color:#bbf7d0}
+    .follow{background:var(--follow-soft);color:var(--follow);border-color:#fde68a}
+    .alert{background:var(--alert-soft);color:var(--alert);border-color:#fecaca}
+    .neutral{background:var(--neutral-soft);color:var(--neutral);border-color:#cbd5e1}
+
+    .stats{
+      display:grid;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .stat-box{
+      background:var(--panel-soft);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      min-width:0;
+    }
+
+    .stat-label{
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:6px;
+    }
+
+    .stat-value{
+      font-size:18px;
+      font-weight:900;
+      line-height:1.2;
+      overflow-wrap:anywhere;
+    }
+
+    .progress-wrap{
+      display:grid;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .progress-card{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      min-width:0;
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .progress-title{
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .progress-value{
+      font-size:13px;
+      font-weight:800;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+
+    .progress-track{
+      height:12px;
+      background:#edf2f7;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #e2e8f0;
+      margin-bottom:8px;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      transition:width .5s ease;
+      max-width:100%;
+    }
+
+    .progress-foot{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .actions{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn,
+    .btn-secondary,
+    .btn-update,
+    .btn-logout{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:14px;
+      font-weight:800;
+      transition:.2s ease;
+      border:1px solid transparent;
+      cursor:pointer;
+    }
+
+    .btn{
+      width:100%;
+      background:var(--primary);
+      color:#fff;
+      box-shadow:0 8px 18px rgba(37,99,235,.18);
+    }
+
+    .btn-secondary,
+    .btn-update,
+    .btn-logout{
+      background:#fff;
+      color:var(--text);
+      border-color:var(--line);
+    }
+
+    .btn:hover,
+    .btn-secondary:hover,
+    .btn-update:hover,
+    .btn-logout:hover{
+      transform:translateY(-1px);
+      filter:brightness(.98);
+    }
+
+    .error-box{
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#be123c;
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:18px;
+      display:none;
+      white-space:pre-line;
+    }
+
+    .loading{
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    .login-screen{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .login-card{
+      width:100%;
+      max-width:430px;
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:0 20px 60px rgba(15,23,42,.12);
+      padding:28px;
+      backdrop-filter:blur(12px);
+    }
+
+    .login-logo-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      margin-bottom:18px;
+    }
+
+    .login-logo{
+      max-width:180px;
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .login-title{
+      margin:0 0 8px;
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .login-subtitle{
+      margin:0 0 24px;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:14px;
+    }
+
+    .form-group{
+      margin-bottom:14px;
+    }
+
+    .form-label{
+      display:block;
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:8px;
+    }
+
+    .form-input{
+      width:100%;
+      height:50px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:0 14px;
+      font-size:15px;
+      outline:none;
+      background:#fff;
+      transition:border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .form-input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    .login-error{
+      display:none;
+      margin:0 0 14px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #fecaca;
+      background:#fef2f2;
+      color:#b91c1c;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width: 1450px){
+      .grid-5{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media (max-width: 1100px){
+      .grid-5{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .meta{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 720px){
+      body{padding:12px}
+      .title-xl{font-size:30px}
+      .summary-grid{grid-template-columns:1fr}
+      .grid-5{grid-template-columns:1fr}
+      .header-top{flex-direction:column;align-items:stretch}
+      .login-card{padding:22px}
+      .login-title{font-size:26px}
+    }
   </style>
 </head>
 <body>
-
   <section id="loginScreen" class="login-screen">
     <div class="login-card">
-      <img class="login-logo" src="logoviggo.png" alt="Viggo">
-      <h1 class="login-title">Hub Comercial</h1>
-      <p class="login-subtitle">Acceso exclusivo para Gerencia Viggo.</p>
-      <div id="loginError" class="login-error"></div>
-      <form id="loginForm">
+      <div class="login-logo-wrap"><img class="login-logo" src="logoviggo.png" alt="Viggo"></div>
+      <h1 class="login-title">Hub Comercial Viggo</h1>
+      <p class="login-subtitle">Ingresá con tu usuario y contraseña para acceder al dashboard.</p>
+
+      <div id="loginError" class="login-error">Usuario o contraseña incorrectos.</div>
+
+      <form id="loginForm" autocomplete="off">
         <div class="form-group">
-          <label class="form-label">Usuario</label>
-          <input class="form-input" id="username" type="text" required autocomplete="username" />
+          <label class="form-label" for="username">Usuario</label>
+          <input class="form-input" id="username" name="username" type="text" autocomplete="username" required />
         </div>
+
         <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" id="password" type="password" required autocomplete="current-password" />
+          <label class="form-label" for="password">Contraseña</label>
+          <input class="form-input" id="password" name="password" type="password" autocomplete="current-password" required />
         </div>
-        <button type="submit" class="btn-login">Ingresar al Hub</button>
+
+        <button type="submit" class="btn">Ingresar</button>
       </form>
     </div>
   </section>
 
-  <div id="app" class="container hidden">
-    <div class="header-top">
-      <div style="flex: 1;">
-        <h1 class="title-xl">Hub Comercial Viggo</h1>
+  <div class="container hidden" id="app">
+    <div id="errorBox" class="error-box"></div>
+
+    <section class="header">
+      <div class="card card-pad">
+        <div class="header-top">
+          <div>
+            <h1 class="title-xl">Hub Comercial Viggo</h1>
+            <div class="muted">Acceso rápido a dashboards de vendedores y gerencias.</div>
+          </div>
+          <div class="actions"><button id="refreshBtn" class="btn-update" type="button">Actualizar</button><button id="logoutBtn" class="btn-logout" type="button">Cerrar sesión</button></div>
+        </div>
+
         <div class="meta">
-          <div class="meta-item"><div class="meta-label">Mes Actual</div><div class="meta-value" id="currentMonth">-</div></div>
-          <div class="meta-item"><div class="meta-label">Última Actualización</div><div class="meta-value" id="lastUpdate">-</div></div>
-          <div class="meta-item" style="display: flex; align-items: center; justify-content: center;">
-            <button onclick="logout()" style="border:1px solid #fee2e2; background:#fff1f2; color:#be123c; cursor:pointer; font-weight:bold; padding: 10px 20px; border-radius: 12px;">Cerrar Sesión</button>
+          <div class="meta-item">
+            <div class="meta-label">Mes actual</div>
+            <div class="meta-value" id="currentMonth">-</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Última actualización</div>
+            <div class="meta-value" id="lastUpdate">-</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Fuente de datos</div>
+            <div class="meta-value">Google Sheets público</div>
           </div>
         </div>
       </div>
-    </div>
-
-    <section class="summary-grid">
-      <div class="card summary-card"><div class="meta-label">Facturación Total H/F</div><div class="summary-value" id="totalSales">$0</div></div>
-      <div class="card summary-card"><div class="meta-label">Objetivo Global</div><div class="summary-value" id="totalGoal">$0</div></div>
-      <div class="card summary-card"><div class="meta-label">% Cumplimiento Global</div><div class="summary-value" id="totalPct">0%</div></div>
-      <div class="card summary-card"><div class="meta-label">Cobranzas Totales</div><div class="summary-value" id="totalCollections">$0</div></div>
     </section>
 
-    <div class="card card-pad" style="margin-bottom: 22px; background: #f8fbff; border-color: var(--primary);">
-        <h3 style="margin:0; color: var(--primary);">Acceso Directo a Módulos</h3>
-        <p class="muted small" style="margin: 5px 0 15px;">Gestiona usuarios, precios y visualiza el detalle ejecutivo.</p>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="gerencia.html" class="btn-enter" style="background: var(--brand); margin: 0; padding: 10px 20px;">Módulo Gerencia</a>
-            <a href="admin.html" class="btn-enter" style="background: #4b5563; margin: 0; padding: 10px 20px;">Administrar Usuarios</a>
-            <a href="PRECIOS.HTML" target="_blank" class="btn-enter" style="background: #6d28d9; margin: 0; padding: 10px 20px;">Lista Precios AR</a>
-        </div>
-    </div>
+    <section class="summary-grid">
+      <div class="card summary-card">
+        <div class="summary-label">Facturación total H/F</div>
+        <div class="summary-value" id="totalSales">$0</div>
+        <div class="summary-sub">Facturado hasta la fecha.</div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-label">Objetivo total ventas</div>
+        <div class="summary-value" id="totalGoal">$0</div>
+        <div class="summary-sub">Objetivo a cumplir.</div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-label">% cumplimiento global ventas</div>
+        <div class="summary-value" id="totalPct">0,0%</div>
+        <div class="summary-sub">Facturación total H/F sobre objetivo general.</div>
+      </div>
+
+      <div class="card summary-card">
+        <div class="summary-label">Cobranzas totales H/F</div>
+        <div class="summary-value" id="totalCollections">$0</div>
+        <div class="summary-sub">Cobranzas hasta la fecha.</div>
+      </div>
+    </section>
 
     <section class="grid-5" id="sellerGrid"></section>
   </div>
 
   <script>
     const CONFIG = {
-      // Tus URLs originales de Google Sheets
-      salesUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
-      mgmtUrl: "https://docs.google.com/spreadsheets/d/177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk/export?format=csv&gid=0",
+      refreshMs: 7200000,
+
+      auth: {
+        storageKey: "viggo_hub_auth"
+      },
+
+      salesSheetUrl: "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960",
+
+      mgmtSheetId: "177FQYqWxKZln-T-t5Ozo4YIVVRt3VnvNazsUZEuoBWk",
+      mgmtSheetGid: "0",
+
       sellers: [
-        { id: "GABRIEL SIGALI", label: "Gabriel Sigali", file: "sellers.html" },
-        { id: "ANABELLA MADINA", label: "Anabella Madina", file: "sellers.html" },
-        { id: "MATIAS MAGONE", label: "Matías Magone", file: "sellers.html" },
-        { id: "MARIANO MARTINEZ DAN", label: "Mariano Martinez", file: "sellers.html" }
-      ]
+        { summaryName: "GABRIEL SIGALI", clientName: "GABRIEL SIGALI", label: "Gabriel", file: "sellers.html", type: "seller" },
+        { summaryName: "ANABELLA MADINA", clientName: "ANABELLA MADINA", label: "Anabella", file: "sellers.html", type: "seller" },
+        { summaryName: "MATIAS MAGONE", clientName: "MATIAS MAGONE", label: "Matías", file: "sellers.html", type: "seller" },
+        { summaryName: "MARIANO MARTINEZ DAN", clientName: "MARIANO MARTINEZ DAN", label: "Mariano", file: "sellers.html", type: "seller" },
+        { label: "Gerencias", file: "gerencia.html", type: "management" }
+      ],
+
+      summaryColumns: {
+        seller: "VENDEDOR",
+        goal: "OBJETIVO",
+        actual: "FACT HASTA LA FECHA",
+        pct: "% ALCANZADO"
+      },
+
+      clientColumns: {
+        client: "Cliente",
+        seller: "Vend. Cliente",
+        actual: "MES ACTUAL",
+        goal: "OBJ MES"
+      },
+
+      thresholds: {
+        ok: 90,
+        follow: 70
+      }
     };
 
-    const sessionKey = "viggo_hub_auth";
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
 
-    // --- FUNCIONES DE UTILIDAD ---
-    function formatMoney(val) {
-      return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(val || 0);
+      for(let i = 0; i < text.length; i++){
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if(ch === '"'){
+          if(inQuotes && next === '"'){
+            cell += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if(ch === ',' && !inQuotes){
+          row.push(cell);
+          cell = "";
+        } else if((ch === '\n' || ch === '\r') && !inQuotes){
+          if(ch === '\r' && next === '\n') i++;
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += ch;
+        }
+      }
+
+      if(cell.length > 0 || row.length > 0){
+        row.push(cell);
+        rows.push(row);
+      }
+      return rows;
     }
 
-    function parseCSV(text) {
-      return text.split('\n').map(row => {
-        let cells = [];
-        let current = '';
-        let inQuotes = false;
-        for (let i = 0; i < row.length; i++) {
-          if (row[i] === '"') inQuotes = !inQuotes;
-          else if (row[i] === ',' && !inQuotes) { cells.push(current.trim()); current = ''; }
-          else current += row[i];
+    function toNumber(value){
+      if(value == null) return 0;
+      let s = String(value).trim();
+      if(!s) return 0;
+      s = s.replace(/\s/g, "");
+      s = s.replace(/\$/g, "");
+      s = s.replace(/USD/gi, "");
+      s = s.replace(/ARS/gi, "");
+      s = s.replace(/%/g, "");
+      s = s.replace(/\./g, "");
+      s = s.replace(/,/g, ".");
+      s = s.replace(/[^\d.-]/g, "");
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function normalizePercent(value){
+      const n = toNumber(value);
+      return Math.abs(n) <= 1 ? n * 100 : n;
+    }
+
+    function formatCurrency(value){
+      return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+        maximumFractionDigits: 2
+      }).format(Number(value || 0));
+    }
+
+    function formatPercent(value){
+      return new Intl.NumberFormat("es-AR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }).format(Number(value || 0)) + "%";
+    }
+
+    function nowLabel(){
+      return new Date().toLocaleString("es-AR");
+    }
+
+    function getStatusClass(pct){
+      if(pct >= CONFIG.thresholds.ok) return "ok";
+      if(pct >= CONFIG.thresholds.follow) return "follow";
+      return "alert";
+    }
+
+    function getStatusText(pct){
+      if(pct >= CONFIG.thresholds.ok) return "OK";
+      if(pct >= CONFIG.thresholds.follow) return "Seguimiento";
+      return "Alerta";
+    }
+
+    function progressColor(pct){
+      if(pct >= CONFIG.thresholds.ok) return "linear-gradient(90deg,#16a34a,#22c55e)";
+      if(pct >= CONFIG.thresholds.follow) return "linear-gradient(90deg,#d97706,#f59e0b)";
+      return "linear-gradient(90deg,#dc2626,#ef4444)";
+    }
+
+    function clampPercent(n){
+      return Math.max(0, Math.min(n, 100));
+    }
+
+    function safeRatio(actual, goal){
+      if(goal <= 0) return 0;
+      return (actual / goal) * 100;
+    }
+
+    function extractTableByHeaders(rows, requiredHeaders){
+      let bestRow = -1;
+      let bestScore = -1;
+
+      for(let r = 0; r < Math.min(rows.length, 60); r++){
+        const row = rows[r] || [];
+        const normalized = row.map(v => String(v || "").trim().toLowerCase());
+        let score = 0;
+        for(const h of requiredHeaders){
+          if(normalized.includes(String(h).trim().toLowerCase())) score++;
         }
-        cells.push(current.trim());
-        return cells;
+        if(score > bestScore){
+          bestScore = score;
+          bestRow = r;
+        }
+      }
+
+      if(bestRow < 0 || bestScore <= 0){
+        return { records: [] };
+      }
+
+      const header = rows[bestRow] || [];
+      const records = [];
+
+      for(let r = bestRow + 1; r < rows.length; r++){
+        const row = rows[r] || [];
+        if(row.every(v => String(v || "").trim() === "")) continue;
+
+        const obj = {};
+        for(let c = 0; c < header.length; c++){
+          const key = String(header[c] || "").trim();
+          if(key) obj[key] = String(row[c] || "").trim();
+        }
+        records.push(obj);
+      }
+
+      return { records };
+    }
+
+    async function fetchCSV(url){
+      const sep = url.includes("?") ? "&" : "?";
+      const finalUrl = url + sep + "_ts=" + Date.now();
+      const res = await fetch(finalUrl, { cache: "no-store" });
+      if(!res.ok) throw new Error("Google Sheets respondió con estado HTTP " + res.status);
+      const text = await res.text();
+      if(!text || !text.trim()) throw new Error("La respuesta CSV llegó vacía.");
+      return parseCSV(text);
+    }
+
+    function buildSalesData(rows){
+      const summaryHeaders = [
+        CONFIG.summaryColumns.seller,
+        CONFIG.summaryColumns.goal
+      ];
+
+      const clientHeaders = [
+        CONFIG.clientColumns.client,
+        CONFIG.clientColumns.seller,
+        CONFIG.clientColumns.actual,
+        CONFIG.clientColumns.goal
+      ];
+
+      const summaryTable = extractTableByHeaders(rows, summaryHeaders);
+      const clientTable = extractTableByHeaders(rows, clientHeaders);
+
+      const summaryMap = {};
+      summaryTable.records.forEach(r => {
+        const seller = String(r[CONFIG.summaryColumns.seller] || "").trim().toUpperCase();
+        const goal = toNumber(r[CONFIG.summaryColumns.goal]);
+        if(seller) summaryMap[seller] = { goal };
+      });
+
+      const clientTotals = {};
+      clientTable.records.forEach(r => {
+        const seller = String(r[CONFIG.clientColumns.seller] || "").trim().toUpperCase();
+        const actual = toNumber(r[CONFIG.clientColumns.actual]);
+        if(!seller) return;
+        clientTotals[seller] = (clientTotals[seller] || 0) + actual;
+      });
+
+      return CONFIG.sellers
+        .filter(x => x.type === "seller")
+        .map(cfg => {
+          const goal = summaryMap[cfg.summaryName]?.goal || 0;
+          const actual = clientTotals[cfg.clientName] || 0;
+          const pct = safeRatio(actual, goal);
+          return {
+            ...cfg,
+            actual,
+            goal,
+            pct,
+            collections: 0
+          };
+        });
+    }
+
+    function getCell(rows, r, c){
+      return rows?.[r]?.[c] ?? "";
+    }
+
+    function buildManagementData(rows){
+      const mes = getCell(rows, 0, 2) || "-";
+      const fechaActualizacion = getCell(rows, 0, 4) || nowLabel();
+
+      const ventasObj = toNumber(getCell(rows, 3, 1));
+      const cobranzasObj = toNumber(getCell(rows, 3, 2));
+      const gastosObj = toNumber(getCell(rows, 3, 3));
+      const margenObj = normalizePercent(getCell(rows, 3, 4));
+
+      const ventasReal = toNumber(getCell(rows, 7, 1));
+      const cobranzasReal = toNumber(getCell(rows, 7, 2));
+      const gastosReal = toNumber(getCell(rows, 7, 3));
+      const margenReal = normalizePercent(getCell(rows, 7, 4));
+
+      const ventasPct = normalizePercent(getCell(rows, 11, 1));
+      const cobranzasPct = normalizePercent(getCell(rows, 11, 2));
+      const gastosPct = normalizePercent(getCell(rows, 11, 3));
+      const margenPct = normalizePercent(getCell(rows, 11, 4));
+
+      const facturacionTotalHF = toNumber(getCell(rows, 14, 1));
+
+      return {
+        mes,
+        fechaActualizacion,
+        ventasObj,
+        cobranzasObj,
+        gastosObj,
+        margenObj,
+        ventasReal,
+        cobranzasReal,
+        gastosReal,
+        margenReal,
+        ventasPct,
+        cobranzasPct,
+        gastosPct,
+        margenPct,
+        facturacionTotalHF
+      };
+    }
+
+    function renderLanding(vendorData, mgmt){
+      const sellerGrid = document.getElementById("sellerGrid");
+      sellerGrid.innerHTML = "";
+
+      const totalSales = mgmt.facturacionTotalHF;
+      const totalGoal = mgmt.ventasObj;
+      const totalPct = safeRatio(totalSales, totalGoal);
+      const totalCollections = mgmt.cobranzasReal;
+
+      document.getElementById("totalSales").textContent = formatCurrency(totalSales);
+      document.getElementById("totalGoal").textContent = formatCurrency(totalGoal);
+      document.getElementById("totalPct").textContent = formatPercent(totalPct);
+      document.getElementById("totalCollections").textContent = formatCurrency(totalCollections);
+      document.getElementById("currentMonth").textContent = mgmt.mes || "-";
+      document.getElementById("lastUpdate").textContent = mgmt.fechaActualizacion || "-";
+
+      const cards = [
+        ...vendorData,
+        {
+          label: "Gerencias",
+          file: "gerencia.html",
+          type: "management",
+          actual: mgmt.ventasReal,
+          goal: mgmt.ventasObj,
+          pct: mgmt.ventasPct,
+          collections: mgmt.cobranzasReal,
+          expenses: mgmt.gastosReal
+        }
+      ];
+
+      cards.forEach(item => {
+        const isManagement = item.type === "management";
+        const statusClass = isManagement ? "neutral" : getStatusClass(item.pct);
+        const statusText = isManagement ? "Vista ejecutiva" : getStatusText(item.pct);
+
+        const extraStat = isManagement
+          ? `
+            <div class="stat-box">
+              <div class="stat-label">Gastos H/F</div>
+              <div class="stat-value">${formatCurrency(item.expenses)}</div>
+            </div>
+          `
+          : "";
+
+        const card = document.createElement("article");
+        card.className = "card card-pad seller-card";
+
+        card.innerHTML = `
+          <div class="seller-top">
+            <div>
+              <h3 class="seller-name">${item.label}</h3>
+              <div class="seller-role">${isManagement ? "Dashboard ejecutivo general" : "Dashboard individual del vendedor"}</div>
+            </div>
+            <div class="status-chip ${statusClass}">${statusText}</div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-box">
+              <div class="stat-label">${isManagement ? "Ventas + Reservas totales" : "Ventas H/F"}</div>
+              <div class="stat-value">${formatCurrency(item.actual)}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">${isManagement ? "Objetivo total equipo" : "Objetivo ventas"}</div>
+              <div class="stat-value">${formatCurrency(item.goal)}</div>
+            </div>
+                      ${extraStat}
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">% cumplimiento ventas</div>
+                <div class="progress-value">${formatPercent(item.pct)}</div>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${clampPercent(item.pct)}%; background:${progressColor(item.pct)};"></div>
+              </div>
+              <div class="progress-foot">
+                <span>${formatCurrency(item.actual)}</span>
+                <span>${formatCurrency(item.goal)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <a class="btn" href="${item.file}">Ingresar al dashboard</a>
+          </div>
+        `;
+
+        sellerGrid.appendChild(card);
       });
     }
 
-    function cleanNum(val) {
-      if (!val) return 0;
-      return parseFloat(val.replace(/[$.]/g, '').replace(',', '.')) || 0;
+    function showError(msg){
+      const el = document.getElementById("errorBox");
+      el.style.display = "block";
+      el.textContent = msg;
     }
 
-    // --- LÓGICA DE LOGIN ---
-    document.getElementById("loginForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const errorEl = document.getElementById("loginError");
-      errorEl.style.display = "none";
-      
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
+    function hideError(){
+      const el = document.getElementById("errorBox");
+      el.style.display = "none";
+      el.textContent = "";
+    }
 
-      try {
-        const res = await fetch("/api/login", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ username: user, password: pass })
-        });
-        const result = await res.json();
+    async function loadLanding(){
+      const app = document.getElementById("app");
+      app.classList.add("loading");
+      hideError();
 
-        if (result.success && result.user.role === 'management') {
-          sessionStorage.setItem(sessionKey, "true");
-          location.reload();
-        } else {
-          errorEl.textContent = result.message || "No tienes permisos de Gerencia.";
-          errorEl.style.display = "block";
-        }
-      } catch (err) {
-        errorEl.textContent = "Error de conexión con el servidor.";
-        errorEl.style.display = "block";
+      try{
+        const salesRows = await fetchCSV(CONFIG.salesSheetUrl);
+        const mgmtRows = await fetchCSV(`https://docs.google.com/spreadsheets/d/${CONFIG.mgmtSheetId}/export?format=csv&gid=${CONFIG.mgmtSheetGid}`);
+
+        const vendorData = buildSalesData(salesRows);
+        const mgmtData = buildManagementData(mgmtRows);
+
+        renderLanding(vendorData, mgmtData);
+      } catch(err){
+        console.error(err);
+        showError("Error al cargar la landing: " + err.message);
+      } finally {
+        app.classList.remove("loading");
       }
-    };
-
-    function logout() {
-      sessionStorage.removeItem(sessionKey);
-      location.reload();
     }
 
-    // --- CARGA DE DATOS ---
-    async function loadDashboard() {
-      if (sessionStorage.getItem(sessionKey) !== "true") return;
-      
+    function showDashboard(){
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
-
-      try {
-        const [salesRes, mgmtRes] = await Promise.all([
-          fetch(CONFIG.salesUrl + "&t=" + Date.now()),
-          fetch(CONFIG.mgmtUrl + "?t=" + Date.now())
-        ]);
-        
-        const salesData = parseCSV(await salesRes.text());
-        const mgmtData = parseCSV(await mgmtRes.text());
-
-        // Procesar Totales desde Gerencia (Celdas específicas del CSV)
-        const mesActual = mgmtData[0]?.[2] || "Mes Actual";
-        const totalVentas = cleanNum(mgmtData[14]?.[1]);
-        const objetivoVentas = cleanNum(mgmtData[3]?.[1]);
-        const cobranzas = cleanNum(mgmtData[7]?.[2]);
-        const cumplimiento = objetivoVentas > 0 ? (totalVentas / objetivoVentas) * 100 : 0;
-
-        document.getElementById("currentMonth").textContent = mesActual;
-        document.getElementById("lastUpdate").textContent = new Date().toLocaleTimeString();
-        document.getElementById("totalSales").textContent = formatMoney(totalVentas);
-        document.getElementById("totalGoal").textContent = formatMoney(objetivoVentas);
-        document.getElementById("totalCollections").textContent = formatMoney(cobranzas);
-        document.getElementById("totalPct").textContent = cumplimiento.toFixed(1) + "%";
-
-        // Procesar Vendedores desde la hoja de Ventas
-        // Buscamos la tabla de resumen de vendedores (Suele estar en las primeras filas del CSV)
-        const sellerGrid = document.getElementById("sellerGrid");
-        sellerGrid.innerHTML = "";
-
-        CONFIG.sellers.forEach(s => {
-          // Buscamos la fila del vendedor en el CSV de ventas
-          const row = salesData.find(r => r[0] && r[0].toUpperCase() === s.id.toUpperCase());
-          const actual = row ? cleanNum(row[2]) : 0;
-          const goal = row ? cleanNum(row[1]) : 0;
-          const pct = goal > 0 ? (actual / goal) * 100 : 0;
-          
-          let statusClass = "alert";
-          if (pct >= 90) statusClass = "ok";
-          else if (pct >= 70) statusClass = "follow";
-
-          sellerGrid.innerHTML += `
-            <div class="card seller-card">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0">${s.label}</h3>
-                <span class="status-chip ${statusClass}">${pct >= 90 ? 'OK' : pct >= 70 ? 'Seguimiento' : 'Alerta'}</span>
-              </div>
-              <div style="font-size: 13px; color: var(--muted);">
-                Ventas: <strong>${formatMoney(actual)}</strong> / Obj: ${formatMoney(goal)}
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style="width:${Math.min(pct, 100)}%; background:${pct >= 90 ? 'var(--ok)' : pct >= 70 ? 'var(--follow)' : 'var(--alert)'};"></div>
-              </div>
-              <div style="text-align:right; font-weight:800; font-size: 18px;">${pct.toFixed(1)}%</div>
-              <a href="${s.file}" class="btn-enter">Ver Detalle Diario</a>
-            </div>
-          `;
-        });
-
-      } catch (err) {
-        console.error("Error al cargar datos:", err);
-      }
+      loadLanding();
     }
 
-    // Iniciar
-    loadDashboard();
+    function showLogin(){
+      document.getElementById("app").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    }
+
+    function setLoggedIn(){
+      localStorage.setItem(CONFIG.auth.storageKey, "1");
+    }
+
+    function clearLoggedIn(){
+      localStorage.removeItem(CONFIG.auth.storageKey);
+    }
+
+    function isLoggedIn(){
+      return localStorage.getItem(CONFIG.auth.storageKey) === "1";
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+      const error = document.getElementById("loginError");
+
+      error.style.display = "none";
+      const submitBtn = e.target.querySelector("button[type='submit']");
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = "Validando...";
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        const result = await response.json();
+
+        if (result.success && result.user.role === 'management') {
+          setLoggedIn();
+          showDashboard();
+        } else {
+          error.textContent = result.message || "No tenés permiso de gerencia para acceder a este Hub.";
+          error.style.display = "block";
+        }
+      } catch (err) {
+        error.textContent = "Error de conexión con el servidor.";
+        error.style.display = "block";
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", function(){
+      loadLanding();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", function(){
+      clearLoggedIn();
+      showLogin();
+    });
+
+    if(isLoggedIn()){
+      showDashboard();
+    } else {
+      showLogin();
+    }
+
+    setInterval(() => {
+      if(isLoggedIn()) loadLanding();
+    }, CONFIG.refreshMs);
   </script>
 </body>
 </html>
