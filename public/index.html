@@ -3,94 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hub Comercial - Viggo Professional</title>
+  <title>Hub Comercial Viggo</title>
   <style>
-    :root {
-      --brand: #0f5132; --brand-2: #13653f; --bg: #f4f7fb; --panel: #ffffff;
-      --text: #16202c; --muted: #6b7787; --line: #e5ebf3; --primary: #2563eb;
-      --ok: #16a34a; --warn: #d97706; --error: #dc2626; --shadow: 0 10px 30px rgba(0,0,0,0.05);
+    :root{
+      --bg:#f4f7fb; --panel:#ffffff; --panel-soft:#f8fbff; --text:#16202c; --muted:#6b7787;
+      --line:#e5ebf3; --shadow:0 10px 28px rgba(15,23,42,.08); --radius:22px;
+      --ok:#16a34a; --ok-soft:#dcfce7; --follow:#d97706; --follow-soft:#fef3c7;
+      --alert:#dc2626; --alert-soft:#fee2e2; --neutral:#64748b; --neutral-soft:#e2e8f0;
+      --primary:#2563eb; --primary-dark:#1d4ed8;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
-    .hidden { display: none !important; }
+    *{box-sizing:border-box}
+    html,body{ margin:0; padding:0; background:var(--bg); font-family:Inter,Segoe UI,sans-serif; color:var(--text); }
+    body{ padding:24px; min-height:100vh; background: radial-gradient(circle at top left, rgba(37,99,235,.06), transparent 22%), linear-gradient(180deg, #f8fafc 0%, #eef4fa 100%); }
+    .container{ width:100%; max-width:1500px; margin:0 auto; }
+    .hidden{ display:none !important; }
 
-    /* Login Styles */
-    .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .login-card { background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center; }
-    .login-card img { max-width: 180px; margin-bottom: 20px; }
-    .login-card h1 { font-size: 24px; margin-bottom: 10px; }
-    .login-card p { color: var(--muted); margin-bottom: 25px; font-size: 14px; }
-    .form-group { text-align: left; margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: var(--muted); text-transform: uppercase; }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; }
-    .btn-login { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    /* LOGIN */
+    .login-screen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .login-card{ width:100%; max-width:430px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:28px; box-shadow:0 20px 60px rgba(15,23,42,.12); padding:28px; backdrop-filter:blur(12px); }
+    .login-logo{ max-width:180px; width:100%; margin-bottom:18px; display:block; margin: 0 auto; }
+    .login-title{ margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em; text-align:center; }
+    .login-subtitle{ margin:0 0 24px; color:var(--muted); font-size:14px; text-align:center; }
+    .form-group{ margin-bottom:14px; }
+    .form-label{ display:block; font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
+    .form-input{ width:100%; height:50px; border:1px solid var(--line); border-radius:14px; padding:0 14px; font-size:15px; outline:none; background:#fff; }
+    .btn-login{ width:100%; background:var(--primary); color:#fff; border:none; border-radius:14px; padding:14px; font-weight:800; cursor:pointer; font-size:15px; transition:.2s; }
+    .btn-login:hover{ background:var(--primary-dark); }
+    .login-error{ display:none; margin:0 0 14px; padding:12px; border-radius:12px; background:#fef2f2; color:#b91c1c; font-weight:700; border:1px solid #fecaca; text-align:center; }
 
-    /* Hub Styles */
-    .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-    .stat-card { background: white; padding: 20px; border-radius: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--primary); }
-    .stat-label { font-size: 12px; color: var(--muted); font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
-    .stat-value { font-size: 28px; font-weight: 900; }
+    /* DASHBOARD */
+    .card{ background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; backdrop-filter:blur(10px); }
+    .header-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+    .title-xl{ font-size:38px; font-weight:900; letter-spacing:-.03em; margin:0; }
+    .meta{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-top:16px; }
+    .meta-item{ background:var(--panel-soft); border:1px solid var(--line); border-radius:16px; padding:14px; }
+    .meta-label{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; }
+    .meta-value{ font-size:16px; font-weight:800; }
+    
+    .summary-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:22px; }
+    .summary-card{ padding:18px; position:relative; overflow:hidden; }
+    .summary-label{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+    .summary-value{ font-size:30px; font-weight:900; line-height:1.1; margin-top:8px; }
+    .summary-sub{ margin-top:8px; font-size:12px; color:var(--muted); }
+    
+    .grid-5{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:18px; }
+    .seller-card{ display:flex; flex-direction:column; gap:16px; }
+    .status-chip{ padding:6px 12px; border-radius:999px; font-size:11px; font-weight:800; text-transform:uppercase; }
+    .ok{background:var(--ok-soft);color:var(--ok)} .follow{background:var(--follow-soft);color:var(--follow)} .alert{background:var(--alert-soft);color:var(--alert)}
+    .progress-track{ height:12px; background:#edf2f7; border-radius:999px; overflow:hidden; margin-top:8px; border:1px solid var(--line); }
+    .progress-fill{ height:100%; transition:width .8s ease; }
+    .btn-enter{ background:var(--primary); color:white; text-decoration:none; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:14px; margin-top:auto; transition:.2s; }
 
-    .module-links { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-    .btn-mod { padding: 12px 20px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; font-size: 14px; }
-
-    .sellers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-    .seller-card { background: white; padding: 25px; border-radius: 22px; box-shadow: var(--shadow); }
-    .seller-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .seller-name { font-size: 20px; font-weight: 800; margin: 0; }
-    .progress-bar { height: 12px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-    .progress-fill { height: 100%; transition: width 0.5s; }
-    .btn-view { display: block; text-align: center; padding: 12px; background: #f1f5f9; color: var(--text); border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+    @media (max-width: 900px){ .summary-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px){ .summary-grid, .grid-5{ grid-template-columns: 1fr; } .title-xl{ font-size: 28px; } }
   </style>
 </head>
 <body>
 
-  <div id="loginScreen" class="login-container">
+  <section id="loginScreen" class="login-screen">
     <div class="login-card">
-      <img src="logoviggo.png" alt="Viggo">
-      <h1>Hub Comercial</h1>
-      <p>Ingresá tus credenciales de Gerencia</p>
-      <div id="loginError" style="color:red; font-weight:bold; margin-bottom:15px; display:none;"></div>
+      <img class="login-logo" src="logoviggo.png" alt="Viggo">
+      <h1 class="login-title">Hub Comercial</h1>
+      <p class="login-subtitle">Acceso exclusivo Gerencia.</p>
+      <div id="loginError" class="login-error"></div>
       <form id="loginForm">
         <div class="form-group">
-          <label>Usuario</label>
-          <input type="text" id="userInput" required>
+          <label class="form-label">Usuario</label>
+          <input class="form-input" id="authUsername" type="text" required autocomplete="username" />
         </div>
         <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="passInput" required>
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" id="authPassword" type="password" required autocomplete="current-password" />
         </div>
         <button type="submit" class="btn-login">Ingresar</button>
       </form>
     </div>
-  </div>
+  </section>
 
-  <div id="mainApp" class="container hidden">
-    <div class="header">
-      <div>
-        <h2 style="margin:0">Viggo Professional</h2>
-        <span id="updateLabel" style="color:var(--muted); font-size:13px;">Actualizando datos...</span>
+  <div id="app" class="container hidden">
+    <div class="header-top">
+      <div style="flex: 1;">
+        <h1 class="title-xl">Hub Comercial Viggo</h1>
+        <div class="meta">
+          <div class="meta-item"><div class="meta-label">Mes Actual</div><div class="meta-value" id="currentMonth">-</div></div>
+          <div class="meta-item"><div class="meta-label">Actualización</div><div class="meta-value" id="lastUpdate">-</div></div>
+          <div class="meta-item" style="display: flex; align-items: center; justify-content: center;">
+            <button onclick="logout()" style="border:1px solid #fee2e2; background:#fff1f2; color:#be123c; cursor:pointer; font-weight:bold; padding: 10px 20px; border-radius: 12px;">Cerrar Sesión</button>
+          </div>
+        </div>
       </div>
-      <button onclick="logout()" style="padding:10px; border-radius:8px; border:1px solid #ddd; cursor:pointer;">Cerrar Sesión</button>
     </div>
 
-    <div class="module-links">
-      <a href="gerencia.html" class="btn-mod" style="background:var(--brand)">Módulo Gerencia</a>
-      <a href="admin.html" class="btn-mod" style="background:#4b5563">Administrar Usuarios</a>
-      <a href="PRECIOS.HTML" class="btn-mod" style="background:#6d28d9">Precios AR</a>
+    <div class="card card-pad" style="margin-bottom: 22px; background: #f8fbff; border-color: var(--primary); display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="gerencia.html" class="btn-enter" style="background: #0f5132; margin: 0; padding: 10px 20px;">Módulo Gerencia</a>
+        <a href="admin.html" class="btn-enter" style="background: #4b5563; margin: 0; padding: 10px 20px;">Administrar Usuarios</a>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Facturación H/F</div><div class="stat-value" id="totalSales">$0</div></div>
-      <div class="stat-card"><div class="stat-label">Objetivo Global</div><div class="stat-value" id="totalGoal">$0</div></div>
-      <div class="stat-card"><div class="stat-label">% Cumplimiento</div><div class="stat-value" id="totalPct">0%</div></div>
-      <div class="stat-card"><div class="stat-label">Cobranzas</div><div class="stat-value" id="totalCollections">$0</div></div>
-    </div>
+    <section class="summary-grid">
+      <div class="card summary-card">
+        <div class="summary-label">Ventas + Reservas</div>
+        <div class="summary-value" id="totalVentasReservas">$0</div>
+        <div class="summary-sub">Total general de ventas y reservas.</div>
+      </div>
+      <div class="card summary-card">
+        <div class="summary-label">Facturación H/F</div>
+        <div class="summary-value" id="totalSales">$0</div>
+        <div class="summary-sub">Monto exclusivamente facturado.</div>
+      </div>
+      <div class="card summary-card">
+        <div class="summary-label">Objetivo Global</div>
+        <div class="summary-value" id="totalGoal">$0</div>
+        <div class="summary-sub">Objetivo total del mes.</div>
+      </div>
+      <div class="card summary-card">
+        <div class="summary-label">% Cumplimiento</div>
+        <div class="summary-value" id="totalPct">0%</div>
+        <div class="summary-sub">Ventas+Reservas vs Objetivo.</div>
+      </div>
+      <div class="card summary-card">
+        <div class="summary-label">Cobranzas Totales</div>
+        <div class="summary-value" id="totalCollections">$0</div>
+        <div class="summary-sub">Total de ingresos confirmados.</div>
+      </div>
+    </section>
 
-    <h3 style="margin-bottom:20px">Seguimiento por Vendedor</h3>
-    <div class="sellers-grid" id="sellersGrid"></div>
+    <section class="grid-5" id="sellerGrid"></section>
   </div>
 
   <script>
@@ -105,108 +142,111 @@
       ]
     };
 
-    // --- SEGURIDAD ---
-    const loginForm = document.getElementById('loginForm');
-    loginForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('userInput').value.trim();
-      const password = document.getElementById('passInput').value.trim();
-      const errorDiv = document.getElementById('loginError');
+    const sessionKey = "viggo_hub_auth";
 
+    // --- PARSEO Y CALCULOS ---
+    function parseCSV(text) {
+      const rows = []; let row = [], value = "", inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i], next = text[i + 1];
+        if (char === '"') { if (inQuotes && next === '"') { value += '"'; i++; } else inQuotes = !inQuotes; }
+        else if (char === "," && !inQuotes) { row.push(value); value = ""; }
+        else if ((char === "\n" || char === "\r") && !inQuotes) { if (char === "\r" && next === "\n") i++; row.push(value); rows.push(row); row = []; value = ""; }
+        else value += char;
+      }
+      if (value || row.length) { row.push(value); rows.push(row); }
+      return rows;
+    }
+
+    function toNumber(val) {
+      if (!val) return 0;
+      const clean = String(val).replace(/\s/g, "").replace(/\./g, "").replace(/,/g, ".").replace(/[^0-9.-]/g, "");
+      return parseFloat(clean) || 0;
+    }
+
+    function formatCurrency(val) {
+      return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(val || 0);
+    }
+
+    // --- SEGURIDAD ---
+    document.getElementById("loginForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const err = document.getElementById("loginError");
+      const user = document.getElementById("authUsername").value.trim();
+      const pass = document.getElementById("authPassword").value.trim();
+      
       try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ username, password })
+        const res = await fetch("/api/login", {
+          method: "POST", headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ username: user, password: pass })
         });
         const result = await res.json();
+
         if (result.success && result.user.role === 'management') {
-          sessionStorage.setItem('viggo_auth', 'true');
-          initDashboard();
+          sessionStorage.setItem(sessionKey, "true");
+          location.reload();
         } else {
-          errorDiv.textContent = "Acceso denegado o rol insuficiente.";
-          errorDiv.style.display = 'block';
+          err.textContent = result.message || "Acceso denegado.";
+          err.style.display = "block";
         }
-      } catch (err) { alert("Error de conexión al servidor."); }
+      } catch (e) { err.textContent = "Error de conexión."; err.style.display = "block"; }
     };
 
-    function logout() { sessionStorage.removeItem('viggo_auth'); location.reload(); }
+    function logout() { sessionStorage.removeItem(sessionKey); location.reload(); }
 
-    // --- CARGA DE DATOS ---
-    async function initDashboard() {
-      if (sessionStorage.getItem('viggo_auth') !== 'true') return;
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('mainApp').classList.remove('hidden');
+    async function loadDashboard() {
+      if (sessionStorage.getItem(sessionKey) !== "true") return;
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
 
       try {
-        const [salesRes, mgmtRes] = await Promise.all([ fetch(CONFIG.salesUrl), fetch(CONFIG.mgmtUrl) ]);
-        const salesText = await salesRes.text();
-        const mgmtText = await mgmtRes.text();
+        const [sRes, mRes] = await Promise.all([fetch(CONFIG.salesUrl), fetch(CONFIG.mgmtUrl)]);
+        const sData = parseCSV(await sRes.text());
+        const mData = parseCSV(await mRes.text());
 
-        const salesData = parseCSV(salesText);
-        const mgmtData = parseCSV(mgmtText);
+        // Datos Generales
+        document.getElementById("currentMonth").textContent = mData[0]?.[2] || "-";
+        document.getElementById("lastUpdate").textContent = new Date().toLocaleTimeString();
+        
+        // Asignación de variables según el CSV de Gerencia
+        const totalVentasReservas = toNumber(mData[7]?.[1]); // Ventas + Reservas (Real)
+        const facturadoSolo = toNumber(mData[14]?.[1]);      // Facturación Total H/F
+        const objGlobal = toNumber(mData[3]?.[1]);           // Objetivo Ventas
+        const cob = toNumber(mData[7]?.[2]);                 // Cobranzas
 
-        renderStats(salesData, mgmtData);
-      } catch (err) { console.error("Error cargando Sheets", err); }
-    }
+        document.getElementById("totalVentasReservas").textContent = formatCurrency(totalVentasReservas);
+        document.getElementById("totalSales").textContent = formatCurrency(facturadoSolo);
+        document.getElementById("totalGoal").textContent = formatCurrency(objGlobal);
+        document.getElementById("totalCollections").textContent = formatCurrency(cob);
+        document.getElementById("totalPct").textContent = objGlobal > 0 ? ((totalVentasReservas/objGlobal)*100).toFixed(1) + "%" : "0%";
 
-    function parseCSV(text) {
-      return text.split('\n').map(row => {
-        let cells = []; let cur = ''; let inQ = false;
-        for (let i=0; i<row.length; i++) {
-          if (row[i]==='"') inQ = !inQ;
-          else if (row[i]===',' && !inQ) { cells.push(cur.trim()); cur=''; }
-          else cur += row[i];
-        }
-        cells.push(cur.trim()); return cells;
-      });
-    }
+        // Tarjetas Vendedores
+        const grid = document.getElementById("sellerGrid");
+        grid.innerHTML = "";
+        
+        CONFIG.sellers.forEach(s => {
+          const row = sData.find(r => r[0] && r[0].toUpperCase() === s.id.toUpperCase());
+          const actual = row ? toNumber(row[2]) : 0;
+          const goal = row ? toNumber(row[1]) : 0;
+          const pct = goal > 0 ? (actual/goal)*100 : 0;
 
-    function cleanNum(val) {
-      if (!val) return 0;
-      return parseFloat(val.replace(/[$.]/g, '').replace(',', '.')) || 0;
-    }
-
-    function formatARS(val) {
-      return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(val);
-    }
-
-    function renderStats(sales, mgmt) {
-      // Totales desde Gerencia (Fila 15 columna B del CSV aprox)
-      const totalV = cleanNum(mgmt[14]?.[1]);
-      const objV = cleanNum(mgmt[3]?.[1]);
-      const cob = cleanNum(mgmt[7]?.[2]);
-
-      document.getElementById('totalSales').textContent = formatARS(totalV);
-      document.getElementById('totalGoal').textContent = formatARS(objV);
-      document.getElementById('totalCollections').textContent = formatARS(cob);
-      document.getElementById('totalPct').textContent = objV > 0 ? ((totalV/objV)*100).toFixed(1) + "%" : "0%";
-      document.getElementById('updateLabel').textContent = "Mes: " + mgmt[0]?.[2] + " | Actualizado: " + new Date().toLocaleTimeString();
-
-      // Vendedores
-      const grid = document.getElementById('sellersGrid');
-      grid.innerHTML = "";
-      CONFIG.sellers.forEach(s => {
-        const row = sales.find(r => r[0] && r[0].toUpperCase() === s.id);
-        const actual = row ? cleanNum(row[2]) : 0;
-        const goal = row ? cleanNum(row[1]) : 0;
-        const pct = goal > 0 ? (actual/goal)*100 : 0;
-
-        grid.innerHTML += `
-          <div class="seller-card">
-            <div class="seller-head">
-              <h3 class="seller-name">${s.label}</h3>
-              <span style="font-weight:900; color:${pct >= 90 ? 'var(--ok)' : 'var(--error)'}">${pct.toFixed(1)}%</span>
+          grid.innerHTML += `
+            <div class="card card-pad seller-card">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0">${s.label}</h3>
+                <span class="status-chip ${pct >= 90 ? 'ok' : pct >= 70 ? 'follow' : 'alert'}">${pct >= 90 ? 'OK' : pct >= 70 ? 'SEGUIMIENTO' : 'ALERTA'}</span>
+              </div>
+              <div style="font-size:13px; color:var(--muted); margin-top:5px;">Ventas: <strong>${formatCurrency(actual)}</strong> / Obj: ${formatCurrency(goal)}</div>
+              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(pct,100)}%; background:${pct>=90?'#16a34a':pct>=70?'#d97706':'#dc2626'};"></div></div>
+              <div style="text-align:right; font-weight:900; font-size:18px;">${pct.toFixed(1)}%</div>
+              <a href="sellers.html" class="btn-enter">Ver Detalles</a>
             </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%; background:${pct>=90?'var(--ok)':pct>=75?'var(--warn)':'var(--error)'}"></div></div>
-            <div style="font-size:13px; color:var(--muted)">Ventas: <strong>${formatARS(actual)}</strong> / Obj: ${formatARS(goal)}</div>
-            <a href="sellers.html" class="btn-view">Ver Detalles</a>
-          </div>
-        `;
-      });
+          `;
+        });
+      } catch (e) { console.error("Error cargando datos", e); }
     }
 
-    if (sessionStorage.getItem('viggo_auth') === 'true') initDashboard();
+    loadDashboard();
   </script>
 </body>
 </html>
