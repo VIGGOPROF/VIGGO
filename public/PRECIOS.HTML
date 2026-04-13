@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lista de precios Viggo</title>
+  <title>Lista de precios Viggo - Argentina</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     :root {
@@ -17,17 +17,8 @@
       --shadow: 0 10px 30px rgba(0,0,0,.08);
       --radius: 16px;
     }
-
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    /* --- ESTILOS DEL LOGIN --- */
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); }
     .hidden { display: none !important; }
     
     .login-screen {
@@ -36,9 +27,8 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: url('IMG6.JPG') center/cover no-repeat;
+      background: url('IMG6.jpeg') center/cover no-repeat;
     }
-
     .login-card {
       width: 100%;
       max-width: 430px;
@@ -49,478 +39,59 @@
       padding: 34px 28px;
       backdrop-filter: blur(8px);
     }
-
-    .login-logo {
-      max-width: 180px;
-      margin: 0 auto 20px auto;
-      display: block;
-    }
-
-    .login-title {
-      margin: 0 0 8px;
-      font-size: 28px;
-      font-weight: 900;
-      text-align: center;
-    }
-
-    .login-subtitle {
-      margin: 0 0 24px;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
-      text-align: center;
-    }
-
+    .login-logo { max-width: 180px; margin: 0 auto 20px auto; display: block; }
+    .login-title { margin: 0 0 8px; font-size: 28px; font-weight: 900; text-align: center; }
+    .login-subtitle { margin: 0 0 24px; color: var(--muted); font-size: 14px; text-align: center; }
     .form-group { margin-bottom: 14px; }
-
-    .form-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .form-input {
-      width: 100%;
-      height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 0 14px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .form-input:focus {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.12);
-    }
-
-    .login-btn {
-      width: 100%;
-      height: 50px;
-      border: none;
-      border-radius: 14px;
-      background: var(--brand);
-      color: white;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: .2s ease;
-    }
-    
+    .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .form-input { width: 100%; height: 50px; border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; font-size: 15px; outline: none; }
+    .form-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.12); }
+    .login-btn { width: 100%; height: 50px; border: none; border-radius: 14px; background: var(--brand); color: white; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: .2s ease; }
     .login-btn:hover { background: var(--brand-2); }
+    .login-error { display: none; margin: 0 0 14px; padding: 12px; border-radius: 12px; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-size: 14px; font-weight: 700; text-align: center; }
 
-    .login-error {
-      display: none;
-      margin: 0 0 14px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-    }
+    .app { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { background: white; border-bottom: 1px solid var(--line); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 20; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar h1 { margin: 0; font-size: 22px; }
+    .content { padding: 24px; }
+    .filters { display: grid; grid-template-columns: 260px 1fr 220px; gap: 14px; margin-bottom: 18px; align-items: end; }
+    .field label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #374151; text-transform: uppercase; }
+    .field input, .field select { width: 100%; height: 42px; border: 1px solid #d1d5db; border-radius: 10px; padding: 0 14px; font-size: 13px; }
+    .export-btn { width: 100%; height: 42px; border: 0; border-radius: 10px; background: var(--brand); color: white; font-weight: bold; cursor: pointer; }
+    .card { background: white; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .table-wrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 1250px; }
+    thead th { position: sticky; top: 0; background: #f9fafb; z-index: 1; font-size: 12px; text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    tbody td { padding: 12px 14px; border-bottom: 1px solid #edf0f2; vertical-align: middle; font-size: 13px; }
+    .thumb { width: 56px; height: 56px; border-radius: 10px; background: #f3f4f6; border: 1px solid #e5e7eb; display: grid; place-items: center; overflow: hidden; cursor: pointer; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .price { font-weight: bold; font-size: 14px; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.78); display: none; align-items: center; justify-content: center; padding: 24px; z-index: 100; }
+    .modal.open { display: flex; }
+    .modal-content img { max-width: 90vw; max-height: 90vh; object-fit: contain; background: white; border-radius: 16px; }
 
-    /* --- ESTILOS DE LA APP --- */
-    .app {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    @media (max-width: 860px) {
+      .filters { grid-template-columns: 1fr; }
+      th:nth-child(2), td:nth-child(2), th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5) { display: none; }
+      table { min-width: 100%; }
     }
-
-    .promo-banner {
-      width: 100%;
-      background: white;
-      border-bottom: 1px solid var(--line);
-      padding: 12px 24px;
-    }
-
-    .promo-banner a {
-      display: block;
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .promo-banner img {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 220px;
-      object-fit: cover;
-      background: #f3f4f6;
-    }
-
-    .topbar {
-      background: white;
-      border-bottom: 1px solid var(--line);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    .brand-badge {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: var(--brand);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-weight: bold;
-      flex-shrink: 0;
-      font-size: 22px;
-    }
-
-    .topbar h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .topbar p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .content {
-      padding: 24px;
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: 260px minmax(260px, 1fr) 220px;
-      gap: 14px;
-      margin-bottom: 18px;
-      align-items: end;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #374151;
-      text-transform: uppercase;
-      letter-spacing: .3px;
-    }
-
-    .field input,
-    .field select {
-      width: 100%;
-      height: 42px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      padding: 0 14px;
-      font-size: 13px;
-      background: white;
-    }
-
-    .field input:focus,
-    .field select:focus {
-      outline: none;
-      border-color: var(--brand-2);
-      box-shadow: 0 0 0 3px rgba(19,101,63,.12);
-    }
-
-    .export-btn {
-      width: 100%;
-      height: 42px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--brand);
-      color: white;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .export-btn:hover {
-      background: var(--brand-2);
-    }
-
-    .card {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--line);
-      background: #fcfcfd;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .table-wrap {
-      overflow: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1250px;
-      background: white;
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #f9fafb;
-      z-index: 1;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .3px;
-      color: #374151;
-      text-align: left;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      white-space: nowrap;
-    }
-
-    tbody td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #edf0f2;
-      vertical-align: middle;
-      font-size: 13px;
-    }
-
-    tbody tr:hover {
-      background: #fafafa;
-    }
-
-    .thumb {
-      width: 56px;
-      height: 56px;
-      border-radius: 10px;
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      display: grid;
-      place-items: center;
-      color: #9ca3af;
-      font-size: 11px;
-      overflow: hidden;
-      cursor: pointer;
-      text-align: center;
-      line-height: 1.1;
-      padding: 4px;
-    }
-
-    .thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .code {
-      font-weight: bold;
-      white-space: nowrap;
-      font-size: 12.5px;
-    }
-
-    .product {
-      font-weight: bold;
-      font-size: 13px;
-      line-height: 1.3;
-      white-space: pre-line;
-    }
-
-    .desc {
-      color: var(--muted);
-      line-height: 1.35;
-      font-size: 12.5px;
-      white-space: pre-line;
-    }
-
-    .bulk {
-      font-weight: bold;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .price {
-      font-weight: bold;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    .empty,
-    .loading {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.78);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 100;
-    }
-
-    .modal.open {
-      display: flex;
-    }
-
-    .modal-content {
-      max-width: 90vw;
-      max-height: 90vh;
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-
-    .modal-content img {
-      display: block;
-      max-width: 90vw;
-      max-height: 90vh;
-      object-fit: contain;
-      background: white;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 36px;
-      height: 36px;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(0,0,0,.7);
-      color: white;
-      cursor: pointer;
-      font-size: 20px;
-      line-height: 1;
-    }
-
-   @media (max-width: 860px) {
-    .promo-banner {
-      padding: 10px 16px;
-    }
-
-    .promo-banner img {
-      max-height: 140px;
-    }
-
-    .filters {
-      grid-template-columns: 1fr;
-    }
-
-    .topbar {
-      padding: 14px 16px;
-      align-items: flex-start;
-    }
-
-    .content {
-      padding: 16px;
-    }
-
-    .topbar h1 {
-      font-size: 18px;
-    }
-
-    .meta {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .table-wrap {
-      overflow-x: hidden;
-    }
-
-    table {
-      min-width: 100%;
-    }
-
-    th:nth-child(2),
-    td:nth-child(2),
-    th:nth-child(4),
-    td:nth-child(4),
-    th:nth-child(5),
-    td:nth-child(5) {
-      display: none;
-    }
-
-    thead th {
-      padding: 10px 12px;
-      font-size: 11px;
-    }
-
-    tbody td {
-      padding: 10px 12px;
-      font-size: 12px;
-    }
-
-    .thumb {
-      width: 46px;
-      height: 46px;
-    }
-
-    .product {
-      font-size: 12px;
-      line-height: 1.25;
-    }
-
-    .price {
-      font-size: 13px;
-      white-space: nowrap;
-    }
-  }
   </style>
 </head>
 <body>
-
   <section id="loginScreen" class="login-screen">
     <div class="login-card">
       <img class="login-logo" src="logoviggo.png" alt="Viggo">
-      <h1 class="login-title">Listas de Precios</h1>
-      <p class="login-subtitle">Ingresá tu usuario y contraseña para acceder al listado.</p>
-
-      <div id="loginError" class="login-error">Usuario o contraseña incorrectos.</div>
-
-      <form id="loginForm" autocomplete="off">
+      <h1 class="login-title">Precios Argentina</h1>
+      <p class="login-subtitle">Ingresá tus credenciales para acceder.</p>
+      <div id="loginError" class="login-error"></div>
+      <form id="loginForm">
         <div class="form-group">
-          <label class="form-label" for="authUsername">Usuario</label>
+          <label class="form-label">Usuario</label>
           <input class="form-input" id="authUsername" type="text" required />
         </div>
         <div class="form-group">
-          <label class="form-label" for="authPassword">Contraseña</label>
+          <label class="form-label">Contraseña</label>
           <input class="form-input" id="authPassword" type="password" required />
         </div>
         <button type="submit" class="login-btn">Ingresar</button>
@@ -529,26 +100,17 @@
   </section>
 
   <div id="appWrapper" class="app hidden">
-    <div id="promoBanner" class="promo-banner" style="display:none;">
-      <a id="promoBannerLink" href="#" target="_blank" rel="noopener noreferrer">
-        <img id="promoBannerImg" src="" alt="Banner promocional" />
-      </a>
-    </div>
-
     <header class="topbar">
       <div class="topbar-left">
-        <img src="logoviggo.png" alt="Viggo" style="height: 48px; border-radius: 8px;">
-        <div>
-          <h1>Lista de precios Viggo</h1>
-          <p>Visualización online con selector de tipo de precio</p>
-        </div>
+        <img src="logoviggo.png" alt="Viggo" style="height: 40px;">
+        <h1>Lista de precios Viggo</h1>
       </div>
+      <button onclick="logout()" style="padding: 8px 15px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-weight: bold;">Salir</button>
     </header>
-
     <main class="content">
       <div class="filters">
         <div class="field">
-          <label for="priceType">Tipo de precio</label>
+          <label>Tipo de precio</label>
           <select id="priceType">
             <option value="precio_promocion" selected>Precio Promoción</option>
             <option value="precio_mayorista">Precio Mayorista</option>
@@ -556,24 +118,15 @@
             <option value="precio_web">Precio Web</option>
           </select>
         </div>
-
         <div class="field">
-          <label for="searchInput">Buscar</label>
-          <input id="searchInput" type="text" placeholder="Buscar por código, producto o descripción" />
+          <label>Buscar</label>
+          <input id="searchInput" type="text" placeholder="Buscar producto..." />
         </div>
-
         <div class="field">
-          <label>&nbsp;</label>
           <button id="exportExcelBtn" class="export-btn">Descargar Excel</button>
         </div>
       </div>
-
       <div class="card">
-        <div class="meta">
-          <span id="resultsInfo">Cargando productos...</span>
-          <span id="currentPriceLabel">Visualizando: Precio Promoción</span>
-        </div>
-
         <div class="table-wrap">
           <table>
             <thead>
@@ -582,342 +135,123 @@
                 <th>Código</th>
                 <th>Producto</th>
                 <th>Descripción</th>
-                <th>Unidades x Bulto</th>
-                <th id="priceHeader">Precio Promoción</th>
+                <th>Bulto</th>
+                <th id="priceHeader">Precio</th>
               </tr>
             </thead>
             <tbody id="productsTableBody"></tbody>
           </table>
         </div>
-
-        <div id="loadingState" class="loading">Cargando listado...</div>
-        <div id="emptyState" class="empty" style="display:none;">
-          No se encontraron productos con los filtros actuales.
-        </div>
       </div>
     </main>
+  </div>
 
-    <div id="imageModal" class="modal">
-      <div class="modal-content">
-        <button id="closeModalBtn" class="modal-close">×</button>
-        <img id="modalImage" src="" alt="Imagen ampliada" />
-      </div>
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <img id="modalImage" src="" />
     </div>
   </div>
 
   <script>
     let products = [];
-
     const sheetId = "1sCJBeTERjfRNB1SLD47WE0O-LIbOG99wEA-Drkpc-dQ";
-    const gid = "0";
-    const googleSheetJsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+    const googleSheetJsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=0`;
 
-    const imageBaseUrl = "";
-
-    const promoConfig = {
-      enabled: false,
-      imageUrl: "",
-      linkUrl: ""
-    };
-
-    const priceType = document.getElementById("priceType");
-    const searchInput = document.getElementById("searchInput");
-    const exportExcelBtn = document.getElementById("exportExcelBtn");
-    const productsTableBody = document.getElementById("productsTableBody");
-    const emptyState = document.getElementById("emptyState");
-    const loadingState = document.getElementById("loadingState");
-    const resultsInfo = document.getElementById("resultsInfo");
-    const currentPriceLabel = document.getElementById("currentPriceLabel");
-    const priceHeader = document.getElementById("priceHeader");
-    const imageModal = document.getElementById("imageModal");
-    const modalImage = document.getElementById("modalImage");
-    const closeModalBtn = document.getElementById("closeModalBtn");
-    const promoBanner = document.getElementById("promoBanner");
-    const promoBannerLink = document.getElementById("promoBannerLink");
-    const promoBannerImg = document.getElementById("promoBannerImg");
-
-    // LÓGICA DE AUTENTICACIÓN
-    const loginScreen = document.getElementById("loginScreen");
-    const appWrapper = document.getElementById("appWrapper");
     const loginForm = document.getElementById("loginForm");
     const loginError = document.getElementById("loginError");
+    const loginScreen = document.getElementById("loginScreen");
+    const appWrapper = document.getElementById("appWrapper");
 
-    function checkAccess() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      const isLogged = sessionStorage.getItem("viggo_precios_auth") === "true";
-
-      if (token === "viggo_cliente_auth" || isLogged) {
+    async function checkAccess() {
+      if (sessionStorage.getItem("viggo_precios_auth") === "true") {
         loginScreen.classList.add("hidden");
         appWrapper.classList.remove("hidden");
-        
-        if (token) {
-          window.history.replaceState({}, document.title, window.location.pathname);
-          sessionStorage.setItem("viggo_precios_auth", "true");
-        }
-        
-        initPromoBanner();
         loadProducts();
-      } else {
-        loginScreen.classList.remove("hidden");
-        appWrapper.classList.add("hidden");
       }
     }
 
-    if (loginForm) {
-      loginForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const user = document.getElementById("authUsername").value.trim().toUpperCase();
-        const pass = document.getElementById("authPassword").value.trim();
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("authUsername").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
 
-        if (user === "VIGGO" && pass === "PRECIOS2026") {
-          loginError.style.display = "none";
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
+
+        if (result.success && (result.user.role === 'prices_ar' || result.user.role === 'management')) {
           sessionStorage.setItem("viggo_precios_auth", "true");
-          loginScreen.classList.add("hidden");
-          appWrapper.classList.remove("hidden");
-          
-          initPromoBanner();
-          loadProducts();
+          location.reload();
         } else {
+          loginError.textContent = result.message || "Acceso denegado";
           loginError.style.display = "block";
         }
-      });
-    }
-
-    function initPromoBanner() {
-      if (!promoConfig.enabled || !promoConfig.imageUrl) {
-        promoBanner.style.display = "none";
-        return;
+      } catch (err) {
+        loginError.textContent = "Error de conexión";
+        loginError.style.display = "block";
       }
+    });
 
-      promoBannerImg.src = promoConfig.imageUrl;
-      promoBannerImg.alt = "Banner promocional";
-
-      if (promoConfig.linkUrl) {
-        promoBannerLink.href = promoConfig.linkUrl;
-        promoBannerLink.style.pointerEvents = "auto";
-        promoBannerLink.style.cursor = "pointer";
-      } else {
-        promoBannerLink.href = "#";
-        promoBannerLink.style.pointerEvents = "none";
-        promoBannerLink.style.cursor = "default";
-      }
-
-      promoBanner.style.display = "block";
-    }
-
-    function formatPrice(value) {
-      const number = Number(value || 0);
-      return new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(number);
-    }
-
-    function getPriceLabel(key) {
-      const labels = {
-        precio_promocion: "Precio Promoción",
-        precio_mayorista: "Precio Mayorista",
-        precio_sugerido: "Precio Sugerido",
-        precio_web: "Precio Web"
-      };
-      return labels[key] || "Precio";
-    }
-
-    function getImageUrl(imgValue) {
-      const value = String(imgValue || "").trim();
-
-      if (!value) return "";
-
-      if (value.startsWith("http://") || value.startsWith("https://")) {
-        return value;
-      }
-
-      if (!imageBaseUrl) return "";
-
-      return imageBaseUrl + value;
-    }
-
-    function parseNumber(value) {
-      if (value == null || value === "") return 0;
-
-      const cleaned = String(value)
-        .replace(/\$/g, "")
-        .replace(/us\$/gi, "")
-        .replace(/\s/g, "")
-        .replace(/\./g, "")
-        .replace(",", ".");
-
-      const number = Number(cleaned);
-      return Number.isNaN(number) ? 0 : number;
-    }
-
-    function getCellValue(cell) {
-      if (!cell) return "";
-      if (cell.f != null) return String(cell.f);
-      if (cell.v != null) return String(cell.v);
-      return "";
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function getFilteredProducts() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-
-      return products.filter(item => {
-        const text = `${item.codigo || ""} ${item.producto || ""} ${item.descripcion || ""}`.toLowerCase();
-        return text.includes(searchTerm);
-      });
+    function logout() {
+      sessionStorage.removeItem("viggo_precios_auth");
+      location.reload();
     }
 
     async function loadProducts() {
-      loadingState.style.display = "block";
-      emptyState.style.display = "none";
-      productsTableBody.innerHTML = "";
-
       try {
         const response = await fetch(googleSheetJsonUrl);
         const text = await response.text();
-
-        const jsonText = text.substring(47, text.length - 2);
-        const data = JSON.parse(jsonText);
-        const rows = data.table.rows || [];
-
-        products = rows.map(row => {
-          const c = row.c || [];
-          return {
-            codigo: getCellValue(c[0]),
-            img: getCellValue(c[1]),
-            producto: getCellValue(c[2]),
-            descripcion: getCellValue(c[3]),
-            unidades_x_bulto: getCellValue(c[4]),
-            precio_promocion: parseNumber(getCellValue(c[5])),
-            precio_mayorista: parseNumber(getCellValue(c[6])),
-            precio_sugerido: parseNumber(getCellValue(c[7])),
-            precio_web: parseNumber(getCellValue(c[8]))
-          };
-        }).filter(item => item.codigo || item.producto);
-
+        const json = JSON.parse(text.substring(47, text.length - 2));
+        const rows = json.table.rows;
+        products = rows.map(r => ({
+          codigo: r.c[0]?.v || "",
+          img: r.c[1]?.v || "",
+          producto: r.c[2]?.v || "",
+          descripcion: r.c[3]?.v || "",
+          bulk: r.c[4]?.v || "",
+          precio_promocion: r.c[5]?.v || 0,
+          precio_mayorista: r.c[6]?.v || 0,
+          precio_sugerido: r.c[7]?.v || 0,
+          precio_web: r.c[8]?.v || 0
+        })).filter(p => p.producto);
         renderTable();
-      } catch (error) {
-        console.error("Error cargando Google Sheet:", error);
-        resultsInfo.textContent = "Error al cargar productos";
-        loadingState.style.display = "none";
-        emptyState.style.display = "block";
-        emptyState.textContent = "No se pudo cargar el listado desde Google Sheets.";
-      }
+      } catch (e) { console.error(e); }
     }
 
     function renderTable() {
-      const priceKey = priceType.value;
-      const filtered = getFilteredProducts();
-
-      productsTableBody.innerHTML = "";
-      priceHeader.textContent = getPriceLabel(priceKey);
-      currentPriceLabel.textContent = `Visualizando: ${getPriceLabel(priceKey)}`;
-      resultsInfo.textContent = `Mostrando ${filtered.length} productos`;
-      loadingState.style.display = "none";
-
-      if (!filtered.length) {
-        emptyState.style.display = "block";
-        emptyState.textContent = "No se encontraron productos con los filtros actuales.";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-      filtered.forEach(item => {
+      const type = document.getElementById("priceType").value;
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const tbody = document.getElementById("productsTableBody");
+      tbody.innerHTML = "";
+      
+      products.filter(p => p.producto.toLowerCase().includes(search) || p.codigo.toLowerCase().includes(search))
+      .forEach(p => {
         const tr = document.createElement("tr");
-        const imgUrl = getImageUrl(item.img);
-
         tr.innerHTML = `
-          <td>
-            <div class="thumb" ${imgUrl ? `data-img="${imgUrl}" data-title="${escapeHtml(item.producto || "")}"` : ""}>
-              ${
-                imgUrl
-                  ? `<img src="${imgUrl}" alt="${escapeHtml(item.producto || "")}" onerror="this.parentElement.innerHTML='Sin foto'">`
-                  : "Sin foto"
-              }
-            </div>
-          </td>
-          <td class="code">${escapeHtml(item.codigo || "-")}</td>
-          <td class="product">${escapeHtml(item.producto || "-")}</td>
-          <td class="desc">${escapeHtml(item.descripcion || "-")}</td>
-          <td class="bulk">${escapeHtml(item.unidades_x_bulto || "-")}</td>
-          <td class="price">${formatPrice(item[priceKey])}</td>
+          <td><div class="thumb" onclick="openModal('${p.img}')"><img src="${p.img}"></div></td>
+          <td>${p.codigo}</td>
+          <td style="font-weight:bold">${p.producto}</td>
+          <td style="color:var(--muted)">${p.descripcion}</td>
+          <td>${p.bulk}</td>
+          <td class="price">USD ${p[type].toFixed(2)}</td>
         `;
-
-        const thumb = tr.querySelector(".thumb[data-img]");
-        if (thumb) {
-          thumb.addEventListener("click", () => {
-            openImageModal(thumb.dataset.img, thumb.dataset.title);
-          });
-        }
-
-        productsTableBody.appendChild(tr);
+        tbody.appendChild(tr);
       });
     }
 
-    function exportToExcel() {
-      const priceKey = priceType.value;
-      const filtered = getFilteredProducts();
-
-      const dataForExcel = filtered.map(item => ({
-        codigo: item.codigo || "",
-        nombre: item.producto || "",
-        precio: Number(item[priceKey] || 0)
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
-
-      worksheet["!cols"] = [
-        { wch: 18 },
-        { wch: 55 },
-        { wch: 16 }
-      ];
-
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Lista de precios");
-
-      const fileName = `lista_precios_viggo_${priceKey}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
+    function openModal(src) {
+      document.getElementById("modalImage").src = src;
+      document.getElementById("imageModal").classList.add("open");
     }
 
-    function openImageModal(src, title = "") {
-      modalImage.src = src;
-      modalImage.alt = title || "Imagen ampliada";
-      imageModal.classList.add("open");
-    }
+    document.getElementById("imageModal").onclick = () => document.getElementById("imageModal").classList.remove("open");
+    document.getElementById("priceType").onchange = renderTable;
+    document.getElementById("searchInput").oninput = renderTable;
 
-    function closeImageModal() {
-      modalImage.src = "";
-      modalImage.alt = "";
-      imageModal.classList.remove("open");
-    }
-
-    priceType.addEventListener("change", renderTable);
-    searchInput.addEventListener("input", renderTable);
-    exportExcelBtn.addEventListener("click", exportToExcel);
-    closeModalBtn.addEventListener("click", closeImageModal);
-
-    imageModal.addEventListener("click", (e) => {
-      if (e.target === imageModal) closeImageModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeImageModal();
-    });
-
-    // Inicia validando el acceso
     checkAccess();
   </script>
 </body>
