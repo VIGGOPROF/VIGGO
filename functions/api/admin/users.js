@@ -27,23 +27,30 @@ export async function onRequest(context) {
 
       return new Response(JSON.stringify({ success: true }), { status: 201 });
     } catch (err) {
-      return new Response(JSON.stringify({ success: false, message: "El usuario ya existe o hay un error en los datos." }), { status: 400 });
+      return new Response(JSON.stringify({ success: false, message: "El usuario ya existe o hay un error." }), { status: 400 });
     }
   }
 
-  // 3. ACTUALIZAR UN USUARIO (PUT)
+  // 3. ACTUALIZAR UN USUARIO (PUT) - AHORA INCLUYE EL ROL
   if (request.method === "PUT") {
     try {
       const body = await request.json();
-      const { id, username, password } = body;
+      const { id, username, password, role } = body;
 
-      if (!id || !username || !password) {
-        return new Response(JSON.stringify({ success: false, message: "Faltan datos para actualizar." }), { status: 400 });
+      if (!id || !username || !role) {
+        return new Response(JSON.stringify({ success: false, message: "Faltan datos requeridos." }), { status: 400 });
       }
 
-      await env.DB.prepare(
-        "UPDATE users SET username = ?, password = ? WHERE id = ?"
-      ).bind(username.toLowerCase(), password, id).run();
+      // Si pasaron una contraseña nueva, la actualizamos. Si no, actualizamos solo usuario y rol.
+      if (password) {
+        await env.DB.prepare(
+          "UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?"
+        ).bind(username.toLowerCase(), password, role, id).run();
+      } else {
+        await env.DB.prepare(
+          "UPDATE users SET username = ?, role = ? WHERE id = ?"
+        ).bind(username.toLowerCase(), role, id).run();
+      }
 
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error) {
