@@ -9,6 +9,13 @@
     body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
     .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
     
+    .hidden { display: none !important; }
+
+    /* Login de Admin */
+    #adminLogin { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
+    #adminLogin input { padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--line); }
+    #adminLogin button { padding: 10px 20px; background: var(--brand); color: white; border: none; border-radius: 5px; cursor: pointer; }
+
     .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
     .header img { height: 40px; }
     h1 { color: var(--text); margin: 0; font-size: 24px; }
@@ -26,6 +33,9 @@
     button.delete { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; width: auto; font-size: 12px; }
     button.delete:hover { background: #b91c1c; }
 
+    button.edit { background: #f59e0b; color: white; padding: 8px 12px; border-radius: 8px; width: auto; font-size: 12px; margin-right: 5px;}
+    button.edit:hover { background: #d97706; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
     th { text-transform: uppercase; font-size: 11px; color: #6b7787; background: #f9fafb; position: sticky; top: 0; }
@@ -34,10 +44,25 @@
     .badge { padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
     .badge-seller { background: #dcfce7; color: #16a34a; }
     .badge-client { background: #eff6ff; color: #3b82f6; }
+
+    /* Modal de Edición */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-content { background: white; padding: 30px; border-radius: 15px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .modal-content h3 { margin-top: 0; margin-bottom: 20px; color: var(--brand); }
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .modal-buttons button.cancel { background: #6b7787; }
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <div id="adminLogin">
+    <img src="logoviggo.png" alt="Viggo" style="height: 60px; margin-bottom: 20px;">
+    <h2>Acceso Administración</h2>
+    <input type="password" id="adminPassInput" placeholder="Contraseña de admin">
+    <button onclick="loginAdmin()">Ingresar</button>
+  </div>
+
+  <div class="container hidden" id="adminPanel">
     <div class="header">
       <img src="logoviggo.png" alt="Viggo" onerror="this.style.display='none'">
       <h1>Gestión de Usuarios y Accesos</h1>
@@ -46,12 +71,11 @@
     <h3>Dar de alta un nuevo acceso</h3>
     <form id="userForm" class="form-group">
       <div>
-        <label>Nombre Completo (Google Sheet)</label>
-        <input type="text" id="name" placeholder="Ej: Barberia Centro" required>
-      </div>
-      <div>
-        <label>Nombre Corto / Pila</label>
-        <input type="text" id="firstName" placeholder="Ej: Barberia" required>
+        <label>Seleccionar Cliente (desde Google Sheets)</label>
+        <select id="clientSelect" required>
+          <option value="">Cargando clientes...</option>
+        </select>
+        <input type="hidden" id="clientNameHidden">
       </div>
       <div>
         <label>Usuario (Login)</label>
@@ -69,7 +93,7 @@
         </select>
       </div>
       <div class="btn-wrap">
-        <button type="submit">Crear Usuario</button>
+        <button type="submit" id="submitBtn">Crear Usuario</button>
       </div>
     </form>
 
@@ -79,57 +103,153 @@
         <thead>
           <tr>
             <th>Nombre Completo</th>
-            <th>Nombre Corto</th>
             <th>Usuario (Login)</th>
             <th>Rol</th>
             <th>Acción</th>
           </tr>
         </thead>
         <tbody id="userTable">
-          <tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7787;">Cargando usuarios...</td></tr>
+          <tr><td colspan="4" style="text-align: center; padding: 20px; color: #6b7787;">Cargando usuarios...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Editar Usuario: <span id="editUserNameDisplay"></span></h3>
+      <input type="hidden" id="editUserId">
+      <div style="margin-bottom: 15px;">
+        <label>Nuevo Usuario (Login)</label>
+        <input type="text" id="editUsername" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--line);">
+      </div>
+      <div>
+        <label>Nueva Contraseña</label>
+        <input type="text" id="editPassword" placeholder="Dejar en blanco para no cambiar" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--line);">
+      </div>
+      <div class="modal-buttons">
+        <button type="button" class="cancel" onclick="closeEditModal()">Cancelar</button>
+        <button type="button" onclick="saveUserEdit()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Cargar usuarios al iniciar
-    async function loadUsers() {
+    // --- LOGIN DEL ADMIN ---
+    // Cambiá "viggoadmin" por la contraseña que quieras usar para entrar a este panel
+    const ADMIN_PASSWORD = "viggoadmin";
+
+    function loginAdmin() {
+      const pass = document.getElementById('adminPassInput').value;
+      if (pass === ADMIN_PASSWORD) {
+        document.getElementById('adminLogin').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        initAdminPanel();
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    }
+
+    // --- LÓGICA DEL PANEL DE ADMINISTRACIÓN ---
+    
+    // Configuración para leer clientes de Google Sheets
+    // Asegurate de que este ID y nombre de hoja sean correctos (la que usabas en dashcliente.html)
+    const SHEET_ID = '1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE'; 
+    const USERS_SHEET_NAME = 'CLIENTES'; // La hoja de donde sacamos la lista
+
+    async function initAdminPanel() {
+      loadUsersFromDB();
+      loadClientsFromSheet();
+    }
+
+    // 1. Obtener lista de clientes de Google Sheets
+    async function loadClientsFromSheet() {
+      const select = document.getElementById('clientSelect');
+      const hiddenInput = document.getElementById('clientNameHidden');
+
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(USERS_SHEET_NAME)}&tqx=out:json`;
+        const res = await fetch(url);
+        const text = await res.text();
+        const jsonText = text.replace(/^.*?setResponse\(/s, '').replace(/\);?\s*$/s, '');
+        const data = JSON.parse(jsonText);
+        
+        // Asumiendo que la columna 0 (A) tiene el nombre del cliente
+        const rows = data.table.rows || [];
+        
+        select.innerHTML = '<option value="">Seleccione un cliente...</option>';
+        
+        rows.forEach(row => {
+          if (row.c && row.c[0] && row.c[0].v) {
+            const clientName = String(row.c[0].v).trim();
+            if (clientName) {
+              const option = document.createElement('option');
+              option.value = clientName;
+              option.textContent = clientName;
+              select.appendChild(option);
+            }
+          }
+        });
+
+        // Actualizar el campo oculto cuando se selecciona un cliente
+        select.addEventListener('change', function() {
+          hiddenInput.value = this.value;
+        });
+
+      } catch (err) {
+        console.error("Error cargando Google Sheets:", err);
+        select.innerHTML = '<option value="">Error al cargar clientes de GSheets</option>';
+      }
+    }
+
+    // 2. Obtener usuarios de la base de datos D1
+    async function loadUsersFromDB() {
+      const tbody = document.getElementById('userTable');
       try {
         const res = await fetch('/api/admin/users');
         const users = await res.json();
-        const tbody = document.getElementById('userTable');
         
         if (users.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay usuarios registrados.</td></tr>';
           return;
         }
 
         tbody.innerHTML = users.map(u => `
           <tr>
             <td>${u.name}</td>
-            <td>${u.first_name || '-'}</td>
             <td><strong>${u.username}</strong></td>
             <td><span class="badge badge-${u.role}">${u.role === 'seller' ? 'Vendedor' : 'Cliente'}</span></td>
-            <td><button class="delete" onclick="deleteUser(${u.id})">Borrar</button></td>
+            <td>
+              <button class="edit" onclick="openEditModal(${u.id}, '${u.username}', '${u.name}')">Editar</button>
+              <button class="delete" onclick="deleteUser(${u.id})">Borrar</button>
+            </td>
           </tr>
         `).join('');
       } catch (err) {
-        document.getElementById('userTable').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar la lista.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error al cargar la lista de la base de datos.</td></tr>';
       }
     }
 
-    // Crear usuario
+    // 3. Crear usuario
     document.getElementById('userForm').onsubmit = async (e) => {
       e.preventDefault();
       
-      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const submitBtn = document.getElementById('submitBtn');
+      const clientSelect = document.getElementById('clientSelect').value;
+      const clientNameHidden = document.getElementById('clientNameHidden').value;
+
+      if (!clientSelect) {
+        alert("Por favor, seleccione un cliente de la lista.");
+        return;
+      }
+
       submitBtn.textContent = "Creando...";
       submitBtn.disabled = true;
 
+      // Usamos el nombre del cliente seleccionado en el desplegable
       const data = {
-        name: document.getElementById('name').value.trim(),
-        first_name: document.getElementById('firstName').value.trim(),
+        name: clientNameHidden, 
+        first_name: clientNameHidden.split(' ')[0], // Nombre corto
         username: document.getElementById('username').value.trim(),
         password: document.getElementById('password').value.trim(),
         role: document.getElementById('role').value
@@ -146,32 +266,84 @@
 
         if (res.ok && result.success) {
           e.target.reset();
-          loadUsers();
+          document.getElementById('clientNameHidden').value = ''; // limpiar oculto
+          loadUsersFromDB();
+          alert("Usuario creado con éxito.");
         } else {
-          alert(result.message || "Error al crear usuario");
+          alert(result.message || "Error al crear usuario. (Posiblemente el usuario ya exista)");
         }
       } catch (err) {
-        alert("Error de conexión al servidor");
+        alert("Error de conexión al servidor al crear usuario.");
       } finally {
         submitBtn.textContent = "Crear Usuario";
         submitBtn.disabled = false;
       }
     };
 
-    // Borrar usuario
+    // 4. Borrar usuario
     async function deleteUser(id) {
       if (!confirm("¿Estás seguro de que querés borrar este usuario definitivamente?")) return;
       
       try {
-        await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' });
-        loadUsers();
+        const res = await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' });
+        if(res.ok) {
+           loadUsersFromDB();
+        } else {
+           alert("Error al borrar el usuario.");
+        }
       } catch (err) {
-        alert("Error al borrar el usuario");
+        alert("Error de red al borrar el usuario");
       }
     }
 
-    // Iniciar carga
-    loadUsers();
+    // --- LÓGICA DE EDICIÓN ---
+    function openEditModal(id, username, name) {
+      document.getElementById('editUserId').value = id;
+      document.getElementById('editUsername').value = username;
+      document.getElementById('editPassword').value = ''; // Lo dejamos en blanco por seguridad
+      document.getElementById('editUserNameDisplay').textContent = name;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+    async function saveUserEdit() {
+      const id = document.getElementById('editUserId').value;
+      const username = document.getElementById('editUsername').value.trim();
+      const password = document.getElementById('editPassword').value.trim();
+
+      if (!username) {
+        alert("El nombre de usuario no puede estar vacío.");
+        return;
+      }
+
+      if (!password) {
+        alert("Debes ingresar una contraseña (puede ser la misma u otra nueva).");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, username, password })
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+          alert("Usuario actualizado correctamente.");
+          closeEditModal();
+          loadUsersFromDB();
+        } else {
+          alert(result.error || "Error al actualizar el usuario.");
+        }
+      } catch (error) {
+        alert("Error de conexión al guardar los cambios.");
+      }
+    }
   </script>
 </body>
 </html>
