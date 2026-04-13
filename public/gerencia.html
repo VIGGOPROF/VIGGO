@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Gerencias - Viggo Professional</title>
+  <title>Dashboard Gerencia - Viggo Professional</title>
   <style>
     :root {
       --bg: #f4f7fb;
@@ -380,34 +380,6 @@
     .bar.real { background: linear-gradient(180deg, rgba(15, 81, 50, 0.95), rgba(15, 81, 50, 0.42)); }
     .bar.gasto { background: linear-gradient(180deg, rgba(220,38,38,0.9), rgba(220,38,38,0.42)); }
 
-    .progress-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .progress-item { display: grid; gap: 7px; }
-
-    .progress-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .progress-track {
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(22,32,43,0.08);
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--brand), #f0d78b);
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -471,7 +443,7 @@
     <div class="container">
       <header class="header">
         <div class="title-wrap">
-          <h1>Dashboard Gerencias</h1>
+          <h1>Dashboard Gerencia</h1>
           <p>Control ejecutivo de objetivo mensual, datos H/F y cumplimiento.</p>
         </div>
         <div class="meta">
@@ -501,7 +473,7 @@
 
         <article class="panel">
           <div class="panel-inner">
-            <h3 class="panel-title">Vista rápida</h3>
+            <h3 style="margin: 0 0 16px; font-size: 18px;">Vista rápida</h3>
             <div class="mini-bars">
               <div class="mini-row">
                 <div class="name">Ventas</div>
@@ -580,7 +552,7 @@
 
       <section class="panel">
         <div class="panel-inner">
-          <h3 class="panel-title">Detalle consolidado</h3>
+          <h3 style="margin: 0 0 16px; font-size: 18px;">Detalle consolidado</h3>
           <div style="overflow-x: auto;">
             <table>
               <thead>
@@ -660,7 +632,10 @@
       loginError.style.display = "none";
       const username = document.getElementById("authUsername").value.trim();
       const password = document.getElementById("authPassword").value.trim();
-
+      const submitBtn = e.target.querySelector("button[type='submit']");
+      
+      submitBtn.textContent = "Validando...";
+      
       try {
         const res = await fetch("/api/login", {
           method: "POST",
@@ -682,6 +657,8 @@
       } catch (error) {
         loginError.textContent = "Error de conexión con el servidor.";
         loginError.style.display = "block";
+      } finally {
+        submitBtn.textContent = "Ingresar";
       }
     });
 
@@ -724,41 +701,79 @@
     function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
     function setWidth(id, val) { const el = document.getElementById(id); if (el) el.style.width = `${Math.max(0, Math.min(100, val))}%`; }
 
+    function calcStatus(tipo, pct) {
+      if (tipo === "ventas") return pct < 60 ? { text: "Alerta", cls: "alert" } : { text: "OK", cls: "ok" };
+      if (tipo === "gastos") return pct > 85 ? { text: "Alerta", cls: "alert" } : { text: "OK", cls: "ok" };
+      if (tipo === "margen") return pct < 65 ? { text: "Alerta", cls: "alert" } : { text: "OK", cls: "ok" };
+      if (tipo === "cobranzas") return pct < 60 ? { text: "Alerta", cls: "alert" } : pct < 85 ? { text: "Seguimiento", cls: "warn" } : { text: "OK", cls: "ok" };
+      return { text: "Seguimiento", cls: "warn" };
+    }
+
+    function setStatus(id, status) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = status.text;
+      el.className = `status ${status.cls}`;
+    }
+
     async function loadDashboard() {
       try {
-        const response = await fetch(`${CSV_URL}&t=${Date.now()}`);
+        const response = await fetch(`${CSV_URL}&t=${Date.now()}`, { cache: "no-store" });
         const text = await response.text();
         const rows = parseCSV(text);
 
         const mes = rows[0]?.[2] || "-";
         const ventasObj = toNumber(rows[3]?.[1]), cobranzasObj = toNumber(rows[3]?.[2]), gastosObj = toNumber(rows[3]?.[3]), margenObj = toNumber(rows[3]?.[4]);
         const ventasReal = toNumber(rows[7]?.[1]), cobranzasReal = toNumber(rows[7]?.[2]), gastosReal = toNumber(rows[7]?.[3]), margenReal = toNumber(rows[7]?.[4]);
-        const vPct = toNumber(rows[11]?.[1]), cPct = toNumber(rows[11]?.[2]), gPct = toNumber(rows[11]?.[3]), mPct = toNumber(rows[11]?.[4]);
+        
+        let vPct = toNumber(rows[11]?.[1]), cPct = toNumber(rows[11]?.[2]), gPct = toNumber(rows[11]?.[3]), mPct = toNumber(rows[11]?.[4]);
+        
+        // Ajuste por si el porcentaje viene como decimal (ej: 0.8 en vez de 80)
+        if(vPct <= 1 && vPct > 0) vPct *= 100;
+        if(cPct <= 1 && cPct > 0) cPct *= 100;
+        if(gPct <= 1 && gPct > 0) gPct *= 100;
+        if(mPct <= 1 && mPct > 0) mPct *= 100;
 
         const global = (vPct + cPct + gPct + mPct) / 4;
 
         setText("mes", mes);
         setText("objetivoTotal", formatPercent(global));
+        setText("cumplimientoGlobal", `Cumplimiento global: ${formatPercent(global)}`);
+
         setText("ventas", formatCurrency(ventasReal));
         setText("ventasObj", formatCurrency(ventasObj));
         setText("ventasPct", formatPercent(vPct));
+        
         setText("cobranzas", formatCurrency(cobranzasReal));
         setText("cobranzasObj", formatCurrency(cobranzasObj));
         setText("cobranzasPct", formatPercent(cPct));
+        
         setText("gastos", formatCurrency(gastosReal));
         setText("gastosObj", formatCurrency(gastosObj));
         setText("gastosPct", formatPercent(gPct));
+        
         setText("margen", formatPercent(margenReal));
+        setText("margenObj", formatPercent(margenObj));
+        setText("margenPct", formatPercent(mPct));
 
         setWidth("miniVentas", vPct); setText("miniVentasTxt", formatPercent(vPct));
         setWidth("miniCobranzas", cPct); setText("miniCobranzasTxt", formatPercent(cPct));
         setWidth("miniGastos", gPct); setText("miniGastosTxt", formatPercent(gPct));
         setWidth("miniMargen", mPct); setText("miniMargenTxt", formatPercent(mPct));
 
-        setText("tblVentasObj", formatCurrency(ventasObj)); setText("tblVentasReal", formatCurrency(ventasReal)); setText("tblVentasPct", formatPercent(vPct));
-        setText("tblCobranzasObj", formatCurrency(cobranzasObj)); setText("tblCobranzasReal", formatCurrency(cobranzasReal)); setText("tblCobranzasPct", formatPercent(cPct));
-        setText("tblGastosObj", formatCurrency(gastosObj)); setText("tblGastosReal", formatCurrency(gastosReal)); setText("tblGastosPct", formatPercent(gPct));
-      } catch (e) { console.error("Error cargando dashboard", e); }
+        setText("tblVentasObj", formatCurrency(ventasObj)); setText("tblVentasReal", formatCurrency(ventasReal)); setText("tblVentasPct", formatPercent(vPct)); setText("tblVentasDesvio", formatCurrency(ventasReal - ventasObj));
+        setText("tblCobranzasObj", formatCurrency(cobranzasObj)); setText("tblCobranzasReal", formatCurrency(cobranzasReal)); setText("tblCobranzasPct", formatPercent(cPct)); setText("tblCobranzasDesvio", formatCurrency(cobranzasReal - cobranzasObj));
+        setText("tblGastosObj", formatCurrency(gastosObj)); setText("tblGastosReal", formatCurrency(gastosReal)); setText("tblGastosPct", formatPercent(gPct)); setText("tblGastosDesvio", formatCurrency(gastosReal - gastosObj));
+        setText("tblMargenObj", formatPercent(margenObj)); setText("tblMargenReal", formatPercent(margenReal)); setText("tblMargenPct", formatPercent(mPct)); setText("tblMargenDesvio", `${(margenReal - margenObj).toFixed(1)} pp`);
+
+        setStatus("ventasStatus", calcStatus("ventas", vPct));
+        setStatus("cobranzasStatus", calcStatus("cobranzas", cPct));
+        setStatus("gastosStatus", calcStatus("gastos", gPct));
+        setStatus("margenStatus", calcStatus("margen", mPct));
+
+      } catch (e) { 
+        console.error("Error cargando dashboard", e); 
+      }
     }
 
     checkSession();
