@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Gestión de Usuarios Viggo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root { --brand: #0f5132; --bg: #f4f7fb; --text: #16202c; --line: #e5ebf3; --shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    body { font-family: Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+    .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
+    
+    .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
+    .header img { height: 40px; }
+    h1 { color: var(--text); margin: 0; font-size: 24px; }
+    
+    .form-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: #f8fbff; padding: 20px; border-radius: 15px; border: 1px solid var(--line); margin-bottom: 30px; }
+    
+    label { font-size: 12px; font-weight: bold; color: #6b7787; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; box-sizing: border-box; }
+    input:focus, select:focus { outline: none; border-color: var(--brand); }
+    
+    .btn-wrap { display: flex; align-items: flex-end; }
+    button { width: 100%; padding: 12px; background: var(--brand); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+    button:hover { background: #13653f; }
+    
+    button.delete { background: #dc2626; color: white; padding: 8px 12px; border-radius: 8px; width: auto; font-size: 12px; }
+    button.delete:hover { background: #b91c1c; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+    th { text-transform: uppercase; font-size: 11px; color: #6b7787; background: #f9fafb; position: sticky; top: 0; }
+    tr:hover { background: #f8fbff; }
+    
+    .badge { padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .badge-seller { background: #dcfce7; color: #16a34a; }
+    .badge-client { background: #eff6ff; color: #3b82f6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="logoviggo.png" alt="Viggo" onerror="this.style.display='none'">
+      <h1>Gestión de Usuarios y Accesos</h1>
+    </div>
+    
+    <h3>Dar de alta un nuevo acceso</h3>
+    <form id="userForm" class="form-group">
+      <div>
+        <label>Nombre Completo (Google Sheet)</label>
+        <input type="text" id="name" placeholder="Ej: Barberia Centro" required>
+      </div>
+      <div>
+        <label>Nombre Corto / Pila</label>
+        <input type="text" id="firstName" placeholder="Ej: Barberia" required>
+      </div>
+      <div>
+        <label>Usuario (Login)</label>
+        <input type="text" id="username" placeholder="Ej: barberiacentro" required>
+      </div>
+      <div>
+        <label>Contraseña</label>
+        <input type="text" id="password" placeholder="Contraseña" required>
+      </div>
+      <div>
+        <label>Tipo de Cuenta</label>
+        <select id="role">
+          <option value="client">Cliente</option>
+          <option value="seller">Vendedor</option>
+        </select>
+      </div>
+      <div class="btn-wrap">
+        <button type="submit">Crear Usuario</button>
+      </div>
+    </form>
+
+    <h3>Usuarios Activos</h3>
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Nombre Corto</th>
+            <th>Usuario (Login)</th>
+            <th>Rol</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="userTable">
+          <tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7787;">Cargando usuarios...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Cargar usuarios al iniciar
+    async function loadUsers() {
+      try {
+        const res = await fetch('/api/admin/users');
+        const users = await res.json();
+        const tbody = document.getElementById('userTable');
+        
+        if (users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay usuarios registrados.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = users.map(u => `
+          <tr>
+            <td>${u.name}</td>
+            <td>${u.first_name || '-'}</td>
+            <td><strong>${u.username}</strong></td>
+            <td><span class="badge badge-${u.role}">${u.role === 'seller' ? 'Vendedor' : 'Cliente'}</span></td>
+            <td><button class="delete" onclick="deleteUser(${u.id})">Borrar</button></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        document.getElementById('userTable').innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error al cargar la lista.</td></tr>';
+      }
+    }
+
+    // Crear usuario
+    document.getElementById('userForm').onsubmit = async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.textContent = "Creando...";
+      submitBtn.disabled = true;
+
+      const data = {
+        name: document.getElementById('name').value.trim(),
+        first_name: document.getElementById('firstName').value.trim(),
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value.trim(),
+        role: document.getElementById('role').value
+      };
+
+      try {
+        const res = await fetch('/api/admin/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+          e.target.reset();
+          loadUsers();
+        } else {
+          alert(result.message || "Error al crear usuario");
+        }
+      } catch (err) {
+        alert("Error de conexión al servidor");
+      } finally {
+        submitBtn.textContent = "Crear Usuario";
+        submitBtn.disabled = false;
+      }
+    };
+
+    // Borrar usuario
+    async function deleteUser(id) {
+      if (!confirm("¿Estás seguro de que querés borrar este usuario definitivamente?")) return;
+      
+      try {
+        await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' });
+        loadUsers();
+      } catch (err) {
+        alert("Error al borrar el usuario");
+      }
+    }
+
+    // Iniciar carga
+    loadUsers();
+  </script>
+</body>
+</html>
