@@ -239,7 +239,7 @@
               <div style="font-size:13px; color:var(--muted); margin-top:5px;">Ventas: <strong>${formatCurrency(actual)}</strong> / Obj: ${formatCurrency(goal)}</div>
               <div class="progress-track"><div class="progress-fill" style="width:${Math.min(pct,100)}%; background:${pct>=90?'#16a34a':pct>=70?'#d97706':'#dc2626'};"></div></div>
               <div style="text-align:right; font-weight:900; font-size:18px;">${pct.toFixed(1)}%</div>
-              <a href="sellers.html" class="btn-enter">Ver Detalles</a>
+              <a href="sellers.html?vendedor=${encodeURIComponent(s.id)}" class="btn-enter">Ver Detalles</a>
             </div>
           `;
         });
