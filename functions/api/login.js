@@ -1,51 +1,53 @@
 export async function onRequestPost(context) {
   try {
-    // 1. Extraemos los datos del entorno (DB) y lo que nos mandó el HTML (username, password)
     const { request, env } = context;
-    const body = await request.json();
-    const { username, password } = body;
-
-    // 2. Validación básica
-    if (!username || !password) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        message: "Faltan datos de usuario o contraseña" 
-      }), { status: 400, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    // 3. Consultamos la base de datos D1
-    // Usamos .toLowerCase() para que no importe si escriben "Ana" o "ana"
-    const query = `SELECT username, role, name, first_name FROM users WHERE username = ? AND password = ?`;
-    const user = await env.DB.prepare(query).bind(username.toLowerCase(), password).first();
-
-    // 4. Respondemos según el resultado
-    if (user) {
-      // ÉXITO: Devolvemos los datos del usuario (sin devolver la contraseña)
-      return new Response(JSON.stringify({
-        success: true,
-        user: {
-          username: user.username,
-          role: user.role,
-          name: user.name,
-          firstName: user.first_name
-        }
-      }), { 
-        status: 200, 
-        headers: { 'Content-Type': 'application/json' } 
+    
+    // Validar si la base de datos está conectada
+    if (!env.DB) {
+      return new Response(JSON.stringify({ success: false, message: "Base de datos no configurada." }), { 
+        status: 500, headers: { "Content-Type": "application/json" } 
       });
-    } else {
-      // ERROR: Credenciales incorrectas
-      return new Response(JSON.stringify({ 
-        success: false, 
-        message: "Usuario o contraseña incorrectos" 
-      }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
+
+    const { username, password } = await request.json();
+    
+    // Buscar al usuario en la base de datos
+    const stmt = env.DB.prepare("SELECT * FROM users WHERE username = ?");
+    const user = await stmt.bind(username).first();
+
+    if (!user) {
+      return new Response(JSON.stringify({ success: false, message: "Usuario no encontrado." }), { 
+        status: 401, headers: { "Content-Type": "application/json" } 
+      });
+    }
+
+    // Verificar la contraseña (texto plano por ahora)
+    if (password !== user.password) {
+      return new Response(JSON.stringify({ success: false, message: "Contraseña incorrecta." }), { 
+        status: 401, headers: { "Content-Type": "application/json" } 
+      });
+    }
+
+    // --- NUEVO: SUMAR UNA VISITA AL CONTADOR ---
+    // Incrementamos el campo 'visits' en 1 para este usuario
+    try {
+      await env.DB.prepare("UPDATE users SET visits = COALESCE(visits, 0) + 1 WHERE id = ?").bind(user.id).run();
+    } catch (updateError) {
+      // Si falla la actualización del contador (ej: porque la columna aún no existe), 
+      // no bloqueamos el login, solo lo dejamos pasar silenciosamente.
+      console.error("No se pudo actualizar el contador de visitas:", updateError);
+    }
+
+    // Si todo está bien, devolver los datos (sin la contraseña)
+    const { password: _, ...safeUser } = user;
+    
+    return new Response(JSON.stringify({ success: true, user: safeUser }), { 
+      status: 200, headers: { "Content-Type": "application/json" } 
+    });
 
   } catch (error) {
-    // Manejo de errores del servidor
-    return new Response(JSON.stringify({ 
-      success: false, 
-      message: "Error interno del servidor: " + error.message 
-    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ success: false, message: "Error interno del servidor.", error: error.message }), { 
+      status: 500, headers: { "Content-Type": "application/json" } 
+    });
   }
 }
