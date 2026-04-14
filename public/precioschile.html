@@ -39,6 +39,11 @@
     .thumb { width: 56px; height: 56px; border-radius: 10px; background: #f3f4f6; overflow: hidden; cursor: pointer; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; }
 
+    /* --- DISTRIBUCIÓN DE COLUMNAS (Para eliminar espacios vacíos) --- */
+    .col-3 { width: 45%; } /* La descripción absorbe el espacio sobrante */
+    .col-4, .col-5, .col-6, .col-7 { text-align: center !important; width: 10%; } /* Centramos Stock y Precios Internos */
+    .col-8 { text-align: right !important; padding-right: 30px !important; width: 10%; } /* PVP a la derecha contra el margen */
+
     /* --- ESTILOS RESPONSIVE PARA CELULARES --- */
     @media (max-width: 768px) {
       .filters { grid-template-columns: 1fr; }
