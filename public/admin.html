@@ -186,15 +186,22 @@
         const res = await fetch(API_URL);
         const data = await res.json();
         
-        if (data.success) {
+        // --- ADAPTADOR A PRUEBA DE BALAS ---
+        // Si el backend mandó la lista suelta (Array directo)
+        if (Array.isArray(data)) {
+          usersData = data;
+        } 
+        // Si el backend mandó el envoltorio { success: true, users: [...] }
+        else if (data && data.users) {
           usersData = data.users;
-          renderTable();
         } else {
-          alert("Error al cargar usuarios: " + data.message);
+          usersData = [];
         }
+        
+        renderTable();
       } catch (error) {
-        console.error(error);
-        alert("Error de conexión al servidor.");
+        console.error("Error al cargar datos:", error);
+        alert("Hubo un problema de conexión al traer los usuarios.");
       }
     }
 
@@ -202,7 +209,7 @@
       const tbody = document.querySelector('#usersTable tbody');
       tbody.innerHTML = '';
 
-      if (usersData.length === 0) {
+      if (!usersData || usersData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay usuarios registrados.</td></tr>';
         return;
       }
@@ -212,7 +219,7 @@
         if (user.role === 'management') roleBadge = '<span class="role-badge role-management">Gerencia</span>';
         else if (user.role === 'seller') roleBadge = '<span class="role-badge role-seller">Vendedor</span>';
         else if (user.role === 'prices_cl') roleBadge = '<span class="role-badge role-prices_cl">Precios Chile</span>';
-        else roleBadge = `<span class="role-badge" style="background:#e2e8f0;">${user.role}</span>`;
+        else roleBadge = `<span class="role-badge" style="background:#e2e8f0;">${user.role || 'Sin Rol'}</span>`;
 
         tbody.innerHTML += `
           <tr>
@@ -276,13 +283,13 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(userData)
         });
-        const data = await res.json();
         
-        if (data.success) {
+        // Si el servidor responde OK (status 200), cerramos y recargamos la tabla
+        if (res.ok) {
           closeModal();
-          fetchUsers(); // Recargar la tabla
+          fetchUsers(); 
         } else {
-          alert("Error: " + data.message);
+          alert("Error del servidor al intentar guardar el usuario.");
         }
       } catch (error) {
         alert("Error de conexión al guardar.");
@@ -293,11 +300,10 @@
       if (confirm("¿Estás seguro de que querés eliminar este usuario? Esta acción no se puede deshacer.")) {
         try {
           const res = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
-          const data = await res.json();
-          if (data.success) {
+          if (res.ok) {
             fetchUsers();
           } else {
-            alert("Error al eliminar: " + data.message);
+            alert("Error del servidor al intentar eliminar.");
           }
         } catch (error) {
           alert("Error de conexión al eliminar.");
