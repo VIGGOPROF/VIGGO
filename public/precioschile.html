@@ -29,13 +29,30 @@
     .content { padding: 24px; }
     .filters { display: grid; grid-template-columns: 1fr 220px; gap: 14px; margin-bottom: 18px; }
     .field input { width: 100%; height: 42px; border: 1px solid #d1d5db; border-radius: 10px; padding: 0 14px; }
-    .export-btn { height: 42px; background: var(--brand); color: white; border: 0; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .export-btn { height: 42px; background: var(--brand); color: white; border: 0; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .export-btn:hover { background: var(--brand-2); }
+    
     .table-wrap { overflow-x: auto; background: white; border: 1px solid var(--line); border-radius: var(--radius); }
-    table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
     thead th { background: #f9fafb; text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 12px; text-transform: uppercase; }
     tbody td { padding: 12px 14px; border-bottom: 1px solid #edf0f2; vertical-align: middle; font-size: 13px; }
     .thumb { width: 56px; height: 56px; border-radius: 10px; background: #f3f4f6; overflow: hidden; cursor: pointer; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* --- ESTILOS RESPONSIVE PARA CELULARES --- */
+    @media (max-width: 768px) {
+      .filters { grid-template-columns: 1fr; }
+      table { min-width: 100%; }
+      .thumb { width: 45px; height: 45px; }
+      .topbar h1 { font-size: 16px !important; }
+      
+      /* Achicamos la letra de la celda del nombre (columna 2) */
+      .name-cell { font-size: 11px !important; line-height: 1.2; }
+      
+      /* Ocultamos la columna 3 (Descripción). 
+         Si tu descripción está en otra columna, cambiá este número (ej: .col-4) */
+      .col-3 { display: none !important; } 
+    }
   </style>
 </head>
 <body>
@@ -125,20 +142,47 @@
       const hRow = document.getElementById("dynamicHeaders");
       const tbody = document.getElementById("productsTableBody");
       
-      hRow.innerHTML = globalHeaders.map((h, i) => i === 0 ? "" : `<th>${h}</th>`).join("");
+      // Inyectamos la clase col-X a los encabezados
+      hRow.innerHTML = globalHeaders.map((h, i) => i === 0 ? "" : `<th class="col-${i}">${h}</th>`).join("");
       tbody.innerHTML = "";
 
       products.filter(p => p.join(" ").toLowerCase().includes(search)).forEach(row => {
         const tr = document.createElement("tr");
+        
+        // Inyectamos la clase col-X a cada celda, y la clase name-cell a la columna 2
         tr.innerHTML = row.map((val, i) => {
           if (i === 0) return "";
-          if (i === 1) return `<td><div class="thumb"><img src="${val}"></div></td>`;
-          if (i === 2) return `<td style="font-weight:bold">${val}</td>`;
-          return `<td>${val}</td>`;
+          if (i === 1) return `<td class="col-${i}"><div class="thumb"><img src="${val}"></div></td>`;
+          if (i === 2) return `<td class="col-${i} name-cell" style="font-weight:bold">${val}</td>`;
+          return `<td class="col-${i}">${val}</td>`;
         }).join("");
+        
         tbody.appendChild(tr);
       });
     }
+
+    // --- FUNCIONALIDAD DE EXPORTACIÓN A EXCEL ---
+    document.getElementById("exportExcelBtn").addEventListener("click", () => {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const filteredProducts = products.filter(p => p.join(" ").toLowerCase().includes(search));
+      
+      if (filteredProducts.length === 0) {
+        alert("No hay productos para exportar.");
+        return;
+      }
+
+      // Preparamos la data ignorando la columna 0 (que está oculta en tu tabla)
+      const exportData = [globalHeaders.slice(1)];
+      filteredProducts.forEach(row => {
+        exportData.push(row.slice(1));
+      });
+
+      // Creamos y descargamos el archivo
+      const worksheet = XLSX.utils.aoa_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Catálogo");
+      XLSX.writeFile(workbook, "Viggo_Lista_Precios_Chile.xlsx");
+    });
 
     document.getElementById("searchInput").oninput = renderTable;
     checkAccess();
