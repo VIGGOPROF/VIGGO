@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista de Precios Viggo - Especial</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f6f8; --card: #ffffff; --text: #111827; --muted: #6b7280; --line: #e5e7eb;
+      --brand: #0f5132; --brand-2: #13653f; --shadow: 0 10px 30px rgba(0,0,0,.08); --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+    .hidden { display: none !important; }
+    
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: url('IMG6.jpeg') center/cover; }
+    .login-card { width: 100%; max-width: 430px; background: rgba(255,255,255,.96); border-radius: 28px; padding: 34px 28px; box-shadow: var(--shadow); backdrop-filter: blur(8px); }
+    .login-logo { max-width: 180px; margin: 0 auto 20px auto; display: block; }
+    .login-title { margin: 0 0 8px; font-size: 26px; font-weight: 900; text-align: center; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+    .form-input { width: 100%; height: 50px; border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; }
+    .login-btn { width: 100%; height: 50px; border: none; border-radius: 14px; background: #16202c; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .login-error { display: none; margin-bottom: 14px; padding: 12px; border-radius: 12px; background: #fef2f2; color: #b91c1c; font-weight: bold; text-align: center; }
+
+    .app { min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { background: white; border-bottom: 1px solid var(--line); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20; }
+    .content { padding: 24px; }
+    .filters { display: grid; grid-template-columns: 1fr 220px; gap: 14px; margin-bottom: 18px; }
+    .field input { width: 100%; height: 42px; border: 1px solid #d1d5db; border-radius: 10px; padding: 0 14px; }
+    .export-btn { height: 42px; background: var(--brand); color: white; border: 0; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .export-btn:hover { background: var(--brand-2); }
+    
+    .table-wrap { overflow-x: auto; background: white; border: 1px solid var(--line); border-radius: var(--radius); }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+    thead th { background: #f9fafb; text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 12px; text-transform: uppercase; }
+    tbody td { padding: 12px 14px; border-bottom: 1px solid #edf0f2; vertical-align: middle; font-size: 13px; }
+    .thumb { width: 56px; height: 56px; border-radius: 10px; background: #f3f4f6; overflow: hidden; cursor: pointer; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Ajuste de columnas para que el precio quede prolijo a la derecha */
+    .col-6 { text-align: right !important; padding-right: 30px !important; font-weight: 900; color: var(--brand); font-size: 15px;}
+    .col-4 { text-align: center !important; }
+
+    /* --- ESTILOS RESPONSIVE PARA CELULARES --- */
+    @media (max-width: 768px) {
+      .filters { grid-template-columns: 1fr; }
+      table { min-width: 100%; }
+      .thumb { width: 45px; height: 45px; }
+      .topbar h1 { font-size: 16px !important; }
+      .name-cell { font-size: 11px !important; line-height: 1.2; }
+      .col-3 { display: none !important; } /* Ocultar descripción en móviles */
+    }
+  </style>
+</head>
+<body>
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <img class="login-logo" src="logoviggo.png" alt="Viggo">
+      <h1 class="login-title">Catálogo Especial</h1>
+      <div id="loginError" class="login-error"></div>
+      <form id="loginForm">
+        <div class="form-group"><label class="form-label">Usuario</label><input class="form-input" id="authUsername" type="text" required /></div>
+        <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="authPassword" type="password" required /></div>
+        <button type="submit" class="login-btn">Ingresar</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="appWrapper" class="app hidden">
+    <header class="topbar">
+      <img src="logoviggo.png" alt="Viggo" style="height: 40px;">
+      <h1 style="font-size: 18px; margin: 0;">Catálogo - Precios Especiales</h1>
+      <button onclick="logout()" style="padding: 8px 15px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-weight: bold;">Salir</button>
+    </header>
+    <main class="content">
+      <div class="filters">
+        <input id="searchInput" type="text" placeholder="Buscar en el catálogo..." />
+        <button id="exportExcelBtn" class="export-btn">Descargar Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr id="dynamicHeaders"></tr></thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let globalHeaders = [];
+    let products = [];
+    const sheetId = "1sCJBeTERjfRNB1SLD47WE0O-LIbOG99wEA-Drkpc-dQ";
+    const sheetName = "LISTA DE PRECIO especial"; // Pestaña exacta de tu Google Sheets
+    const googleSheetJsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+
+    async function checkAccess() {
+      if (sessionStorage.getItem("viggo_precios_especial_auth") === "true") {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appWrapper").classList.remove("hidden");
+        loadProducts();
+      }
+    }
+
+    document.getElementById("loginForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("authUsername").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
+        
+        // --- SEGURIDAD: Solo entra el rol "especial" o "management" ---
+        if (result.success && (result.user.role === 'especial' || result.user.role === 'management')) {
+          sessionStorage.setItem("viggo_precios_especial_auth", "true");
+          location.reload();
+        } else {
+          const err = document.getElementById("loginError");
+          err.textContent = "No tenés permisos para ver este catálogo."; err.style.display = "block";
+        }
+      } catch (err) { alert("Error de conexión"); }
+    };
+
+    function logout() { sessionStorage.removeItem("viggo_precios_especial_auth"); location.reload(); }
+
+    async function loadProducts() {
+      const response = await fetch(googleSheetJsonUrl);
+      const text = await response.text();
+      const data = JSON.parse(text.substring(47, text.length - 2));
+      const cols = data.table.cols;
+      const rows = data.table.rows;
+      globalHeaders = cols.map(c => c.label || "");
+      products = rows.map(r => r.c.map(cell => cell?.f || cell?.v || ""));
+      renderTable();
+    }
+
+    function renderTable() {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const hRow = document.getElementById("dynamicHeaders");
+      const tbody = document.getElementById("productsTableBody");
+      
+      // ELIMINAMOS LA COLUMNA 5 ("precio promo") DE LOS ENCABEZADOS
+      hRow.innerHTML = globalHeaders.map((h, i) => {
+        if (i === 5) return ""; // Ignorar columna 5
+        return `<th class="col-${i}">${h}</th>`;
+      }).join("");
+      
+      tbody.innerHTML = "";
+
+      products.filter(p => p.join(" ").toLowerCase().includes(search)).forEach(row => {
+        const tr = document.createElement("tr");
+        
+        // ELIMINAMOS LA COLUMNA 5 DE LOS DATOS VISUALES
+        tr.innerHTML = row.map((val, i) => {
+          if (i === 5) return ""; // Ignorar el dato de la columna 5
+          if (i === 1) return `<td class="col-${i}"><div class="thumb"><img src="${val}"></div></td>`;
+          if (i === 2) return `<td class="col-${i} name-cell" style="font-weight:bold">${val}</td>`;
+          return `<td class="col-${i}">${val}</td>`;
+        }).join("");
+        
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- FUNCIONALIDAD DE EXCEL (También excluye la columna de precio normal) ---
+    document.getElementById("exportExcelBtn").addEventListener("click", () => {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const filteredProducts = products.filter(p => p.join(" ").toLowerCase().includes(search));
+      
+      if (filteredProducts.length === 0) {
+        alert("No hay productos para exportar.");
+        return;
+      }
+
+      // Preparamos los headers ignorando la columna 5
+      const exportData = [globalHeaders.filter((_, i) => i !== 5)];
+      
+      // Preparamos las filas ignorando la columna 5
+      filteredProducts.forEach(row => {
+        exportData.push(row.filter((_, i) => i !== 5));
+      });
+
+      const worksheet = XLSX.utils.aoa_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Lista Especial");
+      XLSX.writeFile(workbook, "Viggo_Lista_Especial.xlsx");
+    });
+
+    document.getElementById("searchInput").oninput = renderTable;
+    checkAccess();
+  </script>
+</body>
+</html>
