@@ -37,11 +37,8 @@
     td { padding: 15px 20px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: middle; }
     tr:hover { background: #f8fbff; }
 
-    .role-badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; }
-    .role-management { background: #dcfce7; color: #16a34a; }
-    .role-seller { background: #e0e7ff; color: #4f46e5; }
-    .role-prices_cl { background: #fef3c7; color: #d97706; }
-
+    .role-badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; display: inline-block; }
+    
     .action-btn { padding: 8px 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; margin-right: 5px; }
     .btn-edit { background: #fef3c7; color: #d97706; }
     .btn-del { background: #fee2e2; color: #dc2626; }
@@ -78,7 +75,7 @@
     <div class="header">
       <div>
         <h1>Gestión de Usuarios</h1>
-        <div style="color: var(--muted); font-size: 14px; margin-top: 5px;">Administración de accesos a Hub, Vendedores y Precios.</div>
+        <div style="color: var(--muted); font-size: 14px; margin-top: 5px;">Administración de accesos a Hub, Vendedores y Clientes.</div>
       </div>
       <button onclick="logout()" class="action-btn btn-del" style="padding: 10px 15px; font-size: 14px;">Cerrar Sesión Master</button>
     </div>
@@ -93,7 +90,7 @@
           <thead>
             <tr>
               <th>Usuario (Login)</th>
-              <th>Nombre Completo</th>
+              <th>Nombre Completo / Cliente</th>
               <th>Rol / Permiso</th>
               <th>Visitas</th>
               <th style="text-align: right;">Acciones</th>
@@ -117,13 +114,15 @@
         <input type="hidden" id="userId">
         
         <div class="form-group">
-          <label>Nombre Completo (Para mostrar en pantalla)</label>
-          <input type="text" id="userName" class="form-input" placeholder="Ej: Mariano Martinez" required>
+          <label>Nombre Completo / Buscar Cliente</label>
+          <input type="text" id="userName" class="form-input" list="sheetClientsList" placeholder="Elegí un cliente o escribí un nombre..." required autocomplete="off">
+          <datalist id="sheetClientsList"></datalist>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 5px;">Si es para un Cliente, seleccionalo de la lista desplegable.</div>
         </div>
         
         <div class="form-group">
           <label>Usuario de acceso (Todo en minúscula)</label>
-          <input type="text" id="userLogin" class="form-input" placeholder="Ej: mariano" required>
+          <input type="text" id="userLogin" class="form-input" placeholder="Ej: matias, clamancari" required>
         </div>
 
         <div class="form-group">
@@ -134,10 +133,13 @@
         <div class="form-group">
           <label>Rol en el sistema</label>
           <select id="userRole" class="form-input" required>
-            <option value="seller">Vendedor (Acceso solo a su panel)</option>
-            <option value="management">Gerencia (Acceso total al Hub Comercial)</option>
-            <option value="prices_cl">Catálogo Chile (Acceso a precios CH)</option>
-            <option value="especial">Lista Especial (Solo Catálogo Especial)</option>
+            <option value="client">Cliente (Dashboard Facturación y Objetivos)</option>
+            <option value="seller">Vendedor (Panel Vendedor)</option>
+            <option value="management">Gerencia (Hub Comercial Completo)</option>
+            <option value="especial">Lista Especial (Catálogo Especial)</option>
+            <option value="prices_cl">Precios Chile</option>
+            <option value="prices_ar">Precios Argentina</option>
+            <option value="prices_it">Precios Italia</option>
           </select>
         </div>
 
@@ -158,6 +160,7 @@
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('adminApp').classList.remove('hidden');
         fetchUsers();
+        fetchClientsFromSheet(); // Cargamos los clientes al abrir el panel
       }
     }
 
@@ -178,6 +181,52 @@
       location.reload();
     }
 
+    // --- OBTENER CLIENTES DE GOOGLE SHEETS PARA EL DESPLEGABLE ---
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE/gviz/tq?tqx=out:csv&gid=1832475960";
+    
+    async function fetchClientsFromSheet() {
+      try {
+        const res = await fetch(SHEET_URL);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        
+        const clientsSet = new Set();
+        // Recorremos la planilla buscando nombres de clientes en la primera columna
+        rows.forEach(row => {
+          const val = row[0] ? row[0].trim() : "";
+          if (val && val.length > 2 && val !== "Cliente" && val !== "VENDEDOR" && val !== "TOTAL" && isNaN(val)) {
+            clientsSet.add(val);
+          }
+        });
+        
+        const datalist = document.getElementById('sheetClientsList');
+        datalist.innerHTML = Array.from(clientsSet).sort().map(c => `<option value="${c}">`).join('');
+      } catch (e) {
+        console.error("No se pudieron cargar los clientes de la planilla.");
+      }
+    }
+
+    function parseCSV(text) {
+      return text.split('\n').map(row => {
+        let cells = []; let cur = ''; let inQ = false;
+        for (let i=0; i<row.length; i++) {
+          if (row[i]==='"') inQ = !inQ;
+          else if (row[i]===',' && !inQ) { cells.push(cur.trim()); cur=''; }
+          else cur += row[i];
+        }
+        cells.push(cur.trim()); return cells;
+      });
+    }
+
+    // SUGERENCIA AUTOMÁTICA DE USUARIO AL SELECCIONAR UN CLIENTE
+    document.getElementById('userName').addEventListener('change', function(e) {
+        // Si el login está vacío, le sugerimos uno basado en la primera palabra del nombre
+        const loginField = document.getElementById('userLogin');
+        if(!loginField.value && this.value) {
+            loginField.value = this.value.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+    });
+
     // --- CRUD DE USUARIOS ---
     let usersData = [];
     const API_URL = '/api/admin/users';
@@ -187,23 +236,34 @@
         const res = await fetch(API_URL);
         const data = await res.json();
         
-        // --- ADAPTADOR A PRUEBA DE BALAS ---
-        // Si el backend mandó la lista suelta (Array directo)
         if (Array.isArray(data)) {
           usersData = data;
-        } 
-        // Si el backend mandó el envoltorio { success: true, users: [...] }
-        else if (data && data.users) {
+        } else if (data && data.users) {
           usersData = data.users;
         } else {
           usersData = [];
         }
-        
         renderTable();
       } catch (error) {
-        console.error("Error al cargar datos:", error);
         alert("Hubo un problema de conexión al traer los usuarios.");
       }
+    }
+
+    function getRoleBadge(role) {
+      const rolesMap = {
+        'management': { label: 'Gerencia', bg: '#dcfce7', color: '#16a34a' },
+        'Gerencia': { label: 'Gerencia', bg: '#dcfce7', color: '#16a34a' },
+        'seller': { label: 'Vendedor', bg: '#e0e7ff', color: '#4f46e5' },
+        'client': { label: 'Cliente', bg: '#e2e8f0', color: '#475569' },
+        'especial': { label: 'Lista Especial', bg: '#fef3c7', color: '#d97706' },
+        'prices_cl': { label: 'Precios Chile', bg: '#ffedd5', color: '#c2410c' },
+        'Precios Chile': { label: 'Precios Chile', bg: '#ffedd5', color: '#c2410c' },
+        'prices_ar': { label: 'Precios AR', bg: '#dbeafe', color: '#1d4ed8' },
+        'prices_it': { label: 'Precios IT', bg: '#fae8ff', color: '#a21caf' }
+      };
+      
+      const config = rolesMap[role] || { label: role || 'Sin Rol', bg: '#f1f5f9', color: '#64748b' };
+      return `<span class="role-badge" style="background:${config.bg}; color:${config.color};">${config.label}</span>`;
     }
 
     function renderTable() {
@@ -216,17 +276,11 @@
       }
 
       usersData.forEach(user => {
-        let roleBadge = '';
-        if (user.role === 'management') roleBadge = '<span class="role-badge role-management">Gerencia</span>';
-        else if (user.role === 'seller') roleBadge = '<span class="role-badge role-seller">Vendedor</span>';
-        else if (user.role === 'prices_cl') roleBadge = '<span class="role-badge role-prices_cl">Precios Chile</span>';
-        else roleBadge = `<span class="role-badge" style="background:#e2e8f0;">${user.role || 'Sin Rol'}</span>`;
-
         tbody.innerHTML += `
           <tr>
             <td><strong>${user.username}</strong></td>
             <td>${user.name}</td>
-            <td>${roleBadge}</td>
+            <td>${getRoleBadge(user.role)}</td>
             <td><strong style="color:var(--brand); font-size: 16px;">${user.visits || 0}</strong></td>
             <td style="text-align: right;">
               <button onclick="openModal('edit', '${user.id}')" class="action-btn btn-edit">Editar</button>
@@ -255,8 +309,17 @@
           document.getElementById('userId').value = user.id;
           document.getElementById('userName').value = user.name;
           document.getElementById('userLogin').value = user.username;
-          document.getElementById('userPass').value = user.password;
-          document.getElementById('userRole').value = user.role;
+          // Dejamos la clave en blanco por seguridad, si escribe algo, se pisa
+          document.getElementById('userPass').value = ''; 
+          document.getElementById('userPass').placeholder = 'Dejar vacío para no cambiar clave';
+          document.getElementById('userPass').required = false;
+          
+          // Seleccionamos el rol correcto o lo agregamos si es viejo
+          let select = document.getElementById('userRole');
+          if (!Array.from(select.options).some(opt => opt.value === user.role)) {
+             select.innerHTML += `<option value="${user.role}">${user.role}</option>`;
+          }
+          select.value = user.role;
         }
       }
     }
@@ -271,9 +334,12 @@
       const userData = {
         name: document.getElementById('userName').value,
         username: document.getElementById('userLogin').value.toLowerCase().replace(/\s/g, ''),
-        password: document.getElementById('userPass').value,
         role: document.getElementById('userRole').value
       };
+
+      // Solo mandamos el password si lo escribió (útil para la edición)
+      const pass = document.getElementById('userPass').value;
+      if (pass) userData.password = pass;
 
       const method = id ? 'PUT' : 'POST';
       if (id) userData.id = id;
@@ -285,7 +351,6 @@
           body: JSON.stringify(userData)
         });
         
-        // Si el servidor responde OK (status 200), cerramos y recargamos la tabla
         if (res.ok) {
           closeModal();
           fetchUsers(); 
@@ -298,14 +363,11 @@
     };
 
     async function deleteUser(id) {
-      if (confirm("¿Estás seguro de que querés eliminar este usuario? Esta acción no se puede deshacer.")) {
+      if (confirm("¿Seguro que querés eliminar este usuario?")) {
         try {
           const res = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
-          if (res.ok) {
-            fetchUsers();
-          } else {
-            alert("Error del servidor al intentar eliminar.");
-          }
+          if (res.ok) fetchUsers();
+          else alert("Error al eliminar.");
         } catch (error) {
           alert("Error de conexión al eliminar.");
         }
