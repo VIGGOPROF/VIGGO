@@ -622,18 +622,13 @@
   </main>
 
   <script>
+    // Se elimina USERS_SHEET_NAME porque ahora lee seguro desde la Base de Datos oficial
     const CONFIG = {
       SHEET_ID: '1GpwQWRZGEkwFh-b2QtX0JeoJGZWv-3KsHzugXhksQgE',
-      USERS_SHEET_NAME: 'CLIENTES',
       DATA_SHEET_NAME: 'SEGUIMIENTO SEMANAL',
       PROMOS_SHEET_NAME: 'PROMOS DASH',
       PROMOS_RANGE: 'A3:C',
       LAST_UPDATE_RANGE: 'J2',
-      USER_COLUMNS: {
-        cliente: 'Cliente',
-        user: 'USER',
-        pass: 'PASS'
-      },
       DATA_COLUMNS: {
         cliente: 'Cliente',
         comprasHF: 'MES ACTUAL',
@@ -798,17 +793,6 @@
       }
     }
 
-    function findUserRow(rows, username, password) {
-      const usernameNorm = normalizeText(username);
-      const passwordRaw = String(password || '').trim();
-
-      return rows.find(r => {
-        const rowUser = normalizeText(r[CONFIG.USER_COLUMNS.user]);
-        const rowPass = String(r[CONFIG.USER_COLUMNS.pass] || '').trim();
-        return rowUser === usernameNorm && rowPass === passwordRaw;
-      });
-    }
-
     function findClientRow(rows, clientName) {
       const target = normalizeText(clientName);
       return rows.find(r => normalizeText(r[CONFIG.DATA_COLUMNS.cliente]) === target);
@@ -945,6 +929,7 @@
       emptyBox.textContent = message;
     }
 
+    // --- NUEVO SISTEMA DE LOGIN CONECTADO A LA BASE DE DATOS (D1) ---
     async function login() {
       loginError.textContent = '';
       const username = document.getElementById('username').value.trim();
@@ -958,38 +943,50 @@
       showDashboard();
 
       try {
-        const userRows = await fetchSheetRows(CONFIG.USERS_SHEET_NAME);
-        const userRow = findUserRow(userRows, username, password);
+        // 1. Consultamos a la base de datos oficial
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
 
-        if (!userRow) {
+        // Si el usuario no existe, la clave está mal, o no es un rol permitido
+        if (!result.success || (result.user.role !== 'client' && result.user.role !== 'management')) {
           dashboardScreen.classList.add('hidden');
           loginScreen.classList.remove('hidden');
           loginError.textContent = 'Usuario o contraseña incorrectos.';
+          loadingBox.classList.add('hidden');
           return;
         }
 
-        const clientName = String(userRow[CONFIG.USER_COLUMNS.cliente] || '').trim();
+        // 2. Si entra, sacamos el nombre de Cliente de la base de datos
+        const clientName = result.user.name; 
+        
         sessionStorage.setItem('viggo_client_user', username);
         sessionStorage.setItem('viggo_client_name', clientName);
+        sessionStorage.setItem('viggo_cliente_auth', 'true');
 
+        // 3. Vamos a buscar sus datos financieros a Google Sheets
         const dataRows = await fetchSheetRows(CONFIG.DATA_SHEET_NAME);
         const row = findClientRow(dataRows, clientName);
 
         if (!row) {
-          showEmpty(`No se encontró información para el cliente: ${clientName}.`);
+          showEmpty(`No se encontró información financiera para el cliente: ${clientName}.`);
           return;
         }
 
         await renderDashboard(clientName, row);
         showContent();
       } catch (error) {
-        showEmpty(error.message + ' Verificá que ambas pestañas estén accesibles.');
+        showEmpty('Error de conexión. Intentá nuevamente.');
       }
     }
 
     function logout() {
       sessionStorage.removeItem('viggo_client_user');
       sessionStorage.removeItem('viggo_client_name');
+      sessionStorage.removeItem('viggo_cliente_auth');
       location.reload();
     }
 
@@ -1012,7 +1009,7 @@
         await renderDashboard(clientName, row);
         showContent();
       } catch (error) {
-        showEmpty(error.message + ' Verificá la configuración de Google Sheets.');
+        showEmpty(error.message + ' Verificá la conexión con Google Sheets.');
       }
     }
 
